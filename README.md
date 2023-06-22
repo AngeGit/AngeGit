@@ -5,7 +5,7 @@
 </h1>
 
 <h2 align="center">
-    I'm Angie Martín, and I make things happen
+    I'm Angie Martín, and I make things happen 😉
     <br/> 
     <br/>
     <img alt="dev_cat" src="https://raw.githubusercontent.com/dev-akshat/archive/main/images/gifs/others/dev_cat.gif" width="100"> 
