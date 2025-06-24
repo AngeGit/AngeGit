@@ -1,6 +1,7 @@
+<img src="github_banner.png" alt="Ángeles Martín - Android & KMP Developer" width="100%" />
+
 <h1 align="center">
-  <img alt="Hello" src="https://raw.githubusercontent.com/dev-akshat/archive/main/images/gifs/others/Hi.gif" width="29px"> 
-      Hello World!          
+  <img alt="Hello" src="https://raw.githubusercontent.com/dev-akshat/archive/main/images/gifs/others/Hi.gif" width="29px">  Hello World!               
   <img alt="Earth" src="https://raw.githubusercontent.com/dev-akshat/archive/main/images/gifs/others/earth.gif" width="24px"/>
 </h1>
 
