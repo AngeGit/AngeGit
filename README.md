@@ -1,70 +1,90 @@
+<!-- Banner principal -->
 <img src="github_banner.png" alt="Ángeles Martín - Android & KMP Developer" width="100%" />
+<br>
+<p align="center">
+  💬 <strong>A Thought for the Wand-Wielding Dev</strong><br>
+  <em>"Code, in my not-so-humble opinion, is our most inexhaustible source of magic."</em><br>
+  <sub>— Not quite Dumbledore, but definitely his vibe in the Jetpack Compose Era.</sub>
+</p>
+<br>
 
+<!-- Hello World -->
 <h1 align="center">
-  <img alt="Hello" src="https://raw.githubusercontent.com/dev-akshat/archive/main/images/gifs/others/Hi.gif" width="29px">  Hello World!               
+  <img alt="Hello" src="https://raw.githubusercontent.com/dev-akshat/archive/main/images/gifs/others/Hi.gif" width="29px">             
   <img alt="Earth" src="https://raw.githubusercontent.com/dev-akshat/archive/main/images/gifs/others/earth.gif" width="24px"/>
 </h1>
+<br>
 
-<h2 align="center">
-    I'm Angie Martín, and I make things happen 😉
-    <br/> 
-    <br/>
-    <img alt="dev_cat" src="https://raw.githubusercontent.com/dev-akshat/archive/main/images/gifs/others/dev_cat.gif" width="100"> 
-    <br/>  
-    <br/>
-    <h4 align="left">
-      <pre>
-        Most of time, things.equals("androidApps") but the else branch of my life could include too {
-           😮‍💨 breathe() 🌱
-           😴 Thread.Sleep(muchMoreLessIWouldWantTo L) 
-           ☕︎  for (i in 0..limitToHeartAttack-1) Drinking.drinkCoffee(i) ˗ˏˋ☕ˎˊ˗
-           ✨ daydreamingWith(listOf(<i>"Harry Potter", "Lord of the Rings", "Marvel next film"</i>))✨ 
-        } 
-        like '% Any other HumanBeing %'  🧙🏼‍♂️🧜🏼‍♀️
-      </pre>
-    </h4>
-</h2>
+# ⚡️ Welcome to my (code) chamber of secrets
 
-<h3 align="left"> About Me : </h3>  
- <p>   
-  <br> 🐱 Cat Friendly. There're few things in life cuter than kittens! Lets assume that.
-  <br>  &#128218; Bookworm. I love reading books (sometimes writing too!)
-  <br>👩‍💻 Constantly learning. Self-taught and a bit (just a bit!) stubborn ⭐ 
-  <br> ⚡ Fun fact: You don't wanna be near me while I'm coding. My Spotify list it... eclectic.
- </p>
-<!-- Tech Stack --> 
+I'm **Ángeles Martín**, Android & Multiplatform Developer with a magical touch.
 
-<!-- Socials --> 
+Once a humble apprentice in the arcane arts of Android development, I now stand as a seasoned sorceress with nearly five years conjuring spells through **Kotlin** and **Jetpack Compose**. Over the past year, I’ve ventured into the enchanted realm of **Kotlin Multiplatform** and **Compose Multiplatform**, crafting incantations that work across realms (Android and beyond).
 
-<h3 align="left">Let's Connect! :</h3>  
-<div align="center">
-<a href="https://www.linkedin.com/in/%C3%A1ngeles-mart%C3%ADn-fontenla-0b7937175/" target="blank">
-  <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/linkedin/linkedin-original.svg" style="height: 3rem"/></a>
-
-<a href="mailto:angelesmafon@gmail.com" target="blank">
-<img src="https://github.com/mahiiverse1/mahiiverse1/blob/main/Gmail_Logo_256px.png" style="height: 3rem"/>
-</a>
-
-</div>
-
-<!-- Tech Stack --> 
+Though I have yet to wield my wand in iOS UI enchantments, I’ve studied the scrolls of its build rituals and am ever-ready to join forces with fellow iOS conjurers. My quest? To uphold the sacred traditions of clean architecture, composable spells, and platform harmony as I grow deeper into the mystical forest of KMM.
 
 
+## 🧙‍♂️ Arcane Toolkit
+Forged over years of study in the School of Craft & Code, this toolkit contains the essential instruments I wield in my daily magical code practice.
+
+
+📜 Spell Language:        `Kotlin` • `Java`  
+🪄 Interface Charms:      `Jetpack Compose` • `XML` • `Material Design 3`  
+🧬 Cross-Realm Binding:   `KMM` • `Compose Multiplatform` • `Shared Spell Modules`  
+🏛️ Structural Wisdom:     `MVVM` • `MVI` • `Clean Architecture` • `SOLID Principles`  
+🔮 Communication Glyphs:  `Retrofit2` • `Ktor` • `Volley`  
+🧪 Trial Runes:           `JUnit` • `Espresso` • `Compose Testing` • `MockK` • `Mockito`  
+⏳ Timeflow Manipulation: `Coroutines` • `Flow` • `LiveData`  
+📚 Memory Seals:          `Room` • `SQLite`  
+🧩 Summoning Rituals:     `Koin` • `Dagger-Hilt`  
+⚙️ Build Incantations:    `Convention Plugins` • `Dependency Management`  
+🧰 Artisan Instruments:   `Android Studio` • `IntelliJ IDEA` • `Figma` • `Jira` • `Confluence`  
+📦 Mystic Utilities:      `GitHub Copilot` • `Firebase Suite` • `Postman`  
+🔁 Deployment Scrolls:    `Git` • `GitHub` • `GitHub` Actions
+
+---
+
+---
+
+## 🔮 My Grimoire (a.k.a. Projects)
+
+| 🧙 Spellbook | What it Summons |
+|-------------|-----------------|
+| [Rick & Morty KMM](https://github.com/AngeGit/RickAndMortyKMM) | A cross-dimensional app powered by KMM, Compose, and clean architecture |
+
+---
+
+## 🪄 Spellcasting Rituals (a.k.a. How I Work)
+
+- ✨ Clean and modular code from the very first incantation
+- 🧩 Architecture patterns that ensure balance (Clean Arch, SOLID)
+- 🧪 Testing potions for safe experimentation (Flow, Mocks, Coroutine testing)
+- 🛡️ Maintainability and clarity above all
+
+---
+
+## 📜 Currently Studying in My Tower
+
+- 🔁 Enhancing shared logic with Compose Multiplatform
+- 📱 Perfecting multiplatform UI spells
+- 🧪 Deepening my testing strategies for shared modules
+
+---
+
+## 📬 Owl Post (Let's Connect)
+
+- 💼 [LinkedIn](https://www.linkedin.com/in/angelesmartin-androiddev/)
+- 📧 ange.dev@gmail.com
+
+---
+
+<p align="center"><em>“Any sufficiently advanced technology is indistinguishable from magic.”</em><br>
+— Arthur C. Clarke</p>
 
 
 
 
-<!--
-**AngeGit/AngeGit** is a ✨ _special_ ✨ repository because its `README.md` (this file) appears on your GitHub profile.
 
-Here are some ideas to get you started:
 
-- 🔭 I’m currently working on ...
-- 🌱 I’m currently learning ...
-- 👯 I’m looking to collaborate on ...
-- 🤔 I’m looking for help with ...
-- 💬 Ask me about ...
-- 📫 How to reach me: ...
-- 😄 Pronouns: ...
-- ⚡ Fun fact: ...
--->
+
+
