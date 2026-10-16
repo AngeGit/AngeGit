@@ -658,8 +658,8 @@ STORY = [
     "shopping cart mid-rewrite and got it **to production**, moved the analytics from GA3 to GA4, and built the Python tool "
     "QA now uses to reconcile events from six analytics SDKs, and brought my AI-agent harness into the team's workflow. "
     "These days I'm on app health: R8 across the app and a high-precision hunt for dead code.",
-    "Claude Code is my daily wand, at work and at home, and I'm building a harness around it: **50+ typed "
-    "skills**, deterministic quality gates and LLM-as-judge evals. When I audited it on **8,466 real agent turns**, I caught "
+    "Claude Code is my daily wand, at work and at home, and I'm building a harness around it. "
+    "When I audited it on **8,466 real agent turns**, I caught "
     "three gates reporting green without evidence. Since then I ask every AI feature the same question: **what's the evidence?**",
     "That's why I'm building **ArIAdna**, a Compose Multiplatform app that shows what an agent is really doing. Fittingly, it's "
     "being built by one: an unattended agent on my home server opens the pull requests, and I review every one and own every decision.",
@@ -895,8 +895,8 @@ INTRO = [  # paragraphs, all in one style; **highlights** only for a few key wor
     "developer based in Madrid, with 5+ years of shipping real apps. By day I build with **Kotlin** and **Compose** "
     "on an app used by millions of shoppers, where a bug in the checkout is never a small bug.",
     "Day and night, I also build the wards that keep **AI coding agents** honest: specs they must follow, gates they "
-    "can't charm their way past, and evidence behind every “tests pass”. At work I brought them into my team's "
-    "workflow; at home they write code while I sleep. I wrote you a Howler with the rest of the story, just below. "
+    "can't charm their way past, and evidence behind every “tests pass”, at work and at home. I wrote you a Howler "
+    "with the rest of the story, just below. "
     "Don't worry: it's a polite one. Almost.",
 ]
 
@@ -967,7 +967,7 @@ text{{font-family:'JBMono',monospace;font-variant-ligatures:none}}.p{{font-size:
 NIGHT_COMMENT = "“With great power comes great responsibility.” — Uncle Ben, clearly talking about AI coding agents"
 NIGHT = [
     "Two shifts, one obsession: **Kotlin that ships**, and **agents that can prove what they did**.",
-    "The day shift taught me that production is the only reviewer that never sleeps. A checkout used by millions "
+    "The day shift taught me that production is the only reviewer that never sleeps. It "
     "forgives nothing, so I test the boring paths, measure before I optimise and leave the code a little cleaner "
     "than I found it.",
     "The night shift is where I bring that discipline to AI. Agents write code while I sleep and open pull requests "
@@ -1134,7 +1134,7 @@ object Angie : Technomancer {
     override val house: House = TODO("The Sorting Hat is still thinking")
 
     suspend fun review(pr: AgentPullRequest) {
-        require(pr.hasEvidence) { "Where. Is. The. Evidence?!" }
+        require(pr.hasEvidence) { "Accio evidence!" }
         pr.merge()
     }
 }"""
