@@ -44,6 +44,7 @@ HEADINGS = {  # file stem: (title, muted tail, size[, crest])
 BRAND = f'<linearGradient id="brand" x1="0" x2="1"><stop offset="0" stop-color="{FUCHSIA}"/><stop offset="1" stop-color="{ORANGE}"/></linearGradient>'
 REDUCED = "@media (prefers-reduced-motion:reduce){*{animation:none!important}}"
 BODY_PX, BODY_LEAD = 14.5, 24  # every paragraph: intro, Howler letter, night shift, house guardrails
+MOBILE_W = 340  # narrow twins of the text panels, picked by <picture> on phones: ~13 px text instead of ~5
 
 
 # ---------- fonts
@@ -720,18 +721,33 @@ def line_svg(x, y, line, cls="p"):
     return f'<text class="{cls}" x="{x}" y="{y}" xml:space="preserve">{out}</text>'
 
 
-def letter(envelope_jpg, burst_jpg):
+def letter(envelope_jpg, burst_jpg, w=860):
     """The Howler opens: the envelope shakes, bursts into sparks over the burst scene, the shout slams in
-    and the letter reveals line by line. Everything stays afterwards, so the letter can be reread."""
-    w, pad, body_px, lead = 860, 48, BODY_PX, BODY_LEAD + 1
-    band_h, cx, cy = 360, 430, 190
+    and the letter reveals line by line. Everything stays afterwards, so the letter can be reread.
+    Narrow (phone) letters split long shouts in two lines instead of shrinking them."""
+    narrow = w < 600
+    pad, body_px, lead = (18 if narrow else 48), BODY_PX, BODY_LEAD + 1
+    band_h = 210 if narrow else 360
+    cx, cy = round(w / 2), round(band_h * 190 / 360)
     max_w = w - 2 * pad
     t_burst, t_shout = 2.0, 2.4
     shout_px = [34] + [24] * (len(STORY_SHOUT) - 2) + [34]  # it opens and closes loudest
-    for i, line in enumerate(STORY_SHOUT):  # shrink a line only if it would not fit
-        natural = width("Oxanium", line, shout_px[i], 1.5) * 1.05
-        if natural > max_w:
-            shout_px[i] = round(shout_px[i] * max_w / natural, 1)
+
+    def fits(text, px):
+        return width("Oxanium", text, px, 1.5) * 1.05
+
+    shout_lines = []
+    for i, line in enumerate(STORY_SHOUT):  # shrink a line only if it would not fit (split it first if narrow)
+        parts = [line]
+        if narrow and fits(line, shout_px[i]) > max_w and " " in line:
+            words = line.split()
+            parts = list(min(((" ".join(words[:k]), " ".join(words[k:])) for k in range(1, len(words))),
+                             key=lambda pr: max(fits(pr[0], shout_px[i]), fits(pr[1], shout_px[i]))))
+        longest = max(fits(part, shout_px[i]) for part in parts)
+        if longest > max_w:
+            shout_px[i] = round(shout_px[i] * max_w / longest, 1)
+        shout_lines.append(parts)
+    hello_lines = wrap(STORY_HELLO, "JBMono", 17, max_w)
     slot_y = band_h + 6  # every line is spoken in the same spot, like subtitles
     starts, t = [], t_shout
     for line in STORY_SHOUT:
@@ -740,11 +756,10 @@ def letter(envelope_jpg, burst_jpg):
         t += dur + .08
     t_text = t + .1
 
-    y = slot_y - 30
     parts = []
-    y += 38
-    parts.append(f'<text class="hello rev" style="animation-delay:{t_text:.2f}s" x="{pad}" y="{slot_y}">{xml(STORY_HELLO)}</text>')
-    y = slot_y
+    for j, line in enumerate(hello_lines):
+        parts.append(f'<text class="hello rev" style="animation-delay:{t_text:.2f}s" x="{pad}" y="{slot_y + j * 22}">{xml(line)}</text>')
+    y = slot_y + (len(hello_lines) - 1) * 22
     y += 22
     delay = t_text + .15
     for para in STORY:
@@ -757,15 +772,18 @@ def letter(envelope_jpg, burst_jpg):
     delay += .2
     parts.append(f'<text class="sign rev" style="animation-delay:{delay:.2f}s" x="{w - pad}" y="{y}" text-anchor="end">{xml(STORY_SIGN)}</text>')
     y += 36
+    end_lines = wrap(STORY_END, "JBMono", 12.5, max_w - 20)
     parts.append(f'<g class="rev" style="animation-delay:{delay + .2:.2f}s"><path class="spark" d="{sparkle(pad + 6, y - 5, 6)}"/>'
-                 f'<text class="end" x="{pad + 20}" y="{y}">{xml(STORY_END)}</text></g>')
-    h = y + pad - 8
+                 + "".join(f'<text class="end" x="{pad + 20}" y="{y + j * 18}">{xml(line)}</text>' for j, line in enumerate(end_lines))
+                 + '</g>')
+    y += (len(end_lines) - 1) * 18
+    h = y + max(pad, 30) - 8
 
     rnd = random.Random(9)
     sparks = []
     for i in range(22):
         ang = i / 22 * 6.283 + rnd.uniform(-.15, .15)
-        dist = rnd.uniform(140, 330)
+        dist = rnd.uniform(140, 330) * w / 860
         dx, dy = dist * math.cos(ang), dist * math.sin(ang) * .62
         colour = rnd.choice([FUCHSIA, "#f9a8d4", ORANGE, "#fde68a"])
         sparks.append(f'<path class="sp" style="--dx:{dx:.0f}px;--dy:{dy:.0f}px" d="{sparkle(cx, cy, rnd.choice([5, 7, 9]))}" fill="{colour}"/>')
@@ -798,9 +816,11 @@ def letter(envelope_jpg, burst_jpg):
 @keyframes rev{{from{{opacity:0;transform:translateY(6px)}}to{{opacity:1;transform:none}}}}"""
     shout = "".join(
         f'<g class="say" style="animation-delay:{start:.2f}s;animation-duration:{dur:.2f}s">'
-        f'<text class="shout shoutglow" style="font-size:{px}px;fill:#ef4444" x="{pad}" y="{slot_y}" filter="url(#tight)">{xml(line)}</text>'
-        f'<text class="shout" style="font-size:{px}px" x="{pad}" y="{slot_y}">{xml(line)}</text></g>'
-        for line, px, (start, dur) in zip(STORY_SHOUT, shout_px, starts))
+        + "".join(f'<text class="shout shoutglow" style="font-size:{px}px;fill:#ef4444" x="{pad}" y="{slot_y + j * px * 1.15:.0f}" filter="url(#tight)">{xml(part)}</text>'
+                  f'<text class="shout" style="font-size:{px}px" x="{pad}" y="{slot_y + j * px * 1.15:.0f}">{xml(part)}</text>'
+                  for j, part in enumerate(lines))
+        + '</g>'
+        for lines, px, (start, dur) in zip(shout_lines, shout_px, starts))
     band_w = w - 8
     return f"""{svg_open(w, h, "A letter from Ángeles", story_plain())}
 <defs>
@@ -919,10 +939,10 @@ def intro_plain():
     return " ".join(text.replace("**", "") for text in INTRO)
 
 
-def intro_panel():
+def intro_panel(w=860):
     """The intro in JetBrains Mono, one style throughout, no card and no bar (the bar is the cards' accent);
     same margins as the night-shift text."""
-    w, pad, tx, size, lead = 860, 6, 6, BODY_PX, BODY_LEAD + 1
+    pad, tx, size, lead = 6, 6, BODY_PX, BODY_LEAD + 1
     max_w = w - tx - 8
     y, out = pad, []
     for i, para in enumerate(INTRO):
@@ -1003,18 +1023,22 @@ text{{font-family:'JBMono',monospace;font-size:{BODY_PX}px;font-variant-ligature
 </svg>"""
 
 
-def night_panel(jpg):
+def night_panel(jpg, w=860):
     """The drawing across the full width, no frame, its bottom melting into the page so it frames the text;
     then Uncle Ben on one line and the paragraphs."""
-    w, tx = 860, 6
+    tx = 6
     img_h = round(w * 732 / 1200)  # from the nose down: lips, screens, hands and keyboard
     max_w = w - tx - 8
     data = base64.b64encode(jpg.read_bytes()).decode()
     out = [f'<image href="data:image/jpeg;base64,{data}" x="0" y="0" width="{w}" height="{img_h}" clip-path="url(#pic)"/>',
            f'<rect width="{w}" height="{img_h + 2}" fill="url(#melt)"/>', f'<rect width="{w}" height="{img_h}" fill="url(#sides)"/>']
-    y = img_h - 40  # the quote sits on the fade, so the drawing frames it
-    text_top = y - 14
-    out.append(f'<text class="cmt" x="{tx}" y="{y}" xml:space="preserve">// {xml(NIGHT_COMMENT)}</text>')
+    quote = wrap(NIGHT_COMMENT, "JBMonoItalic", 13, max_w - width("JBMonoItalic", "// ", 13))
+    # wide: the quote sits on the fade, so the drawing frames it; narrow: it wraps, so it goes under the drawing
+    y = img_h - 40 if len(quote) == 1 else img_h + 6
+    for i, line in enumerate(quote):
+        out.append(f'<text class="cmt" x="{tx}" y="{y}" xml:space="preserve">// {xml(line)}</text>')
+        if i < len(quote) - 1:
+            y += 18
     y += 8
     for para in NIGHT:
         y += 14
@@ -1038,24 +1062,32 @@ def rules_points(house, pts):
     return f"+{pts} {house.upper()}"
 
 
-def rules_panel():
+def rules_panel(w=860):
     """House guardrails as the end-of-term feast: each rule wins points for a house, in that house's colour,
     and the last one wins the cup. No card and no bar, on the same left edge as the rest of the body text."""
-    w, left = 860, 6
+    left = 6
     tx = left + 26
     max_w = w - tx - 8
     y, out = 0, []
     for line in wrap_rich(f"**{RULES_LEAD}**", "JBMono", BODY_PX, w - left - 8):
         y += BODY_LEAD
         out.append(line_svg(left, y, line))
-    y += BODY_LEAD - 4
-    out.append(f'<text class="cmt" x="{left}" y="{y}" xml:space="preserve">{xml(RULES_POINTS)}</text>')
+    for i, line in enumerate(wrap(RULES_POINTS.removeprefix("// "), "JBMonoItalic", 13, w - left - 8 - width("JBMonoItalic", "// ", 13))):
+        y += BODY_LEAD - 4 if i == 0 else 18
+        out.append(f'<text class="cmt" x="{left}" y="{y}" xml:space="preserve">// {xml(line)}</text>')
     y += 4
     for title, desc, house, pts in RULES:
         y += 14 + BODY_LEAD
         out.append(f'<path class="bul" d="{sparkle(left + 7, y - 5, 6)}"/>')
-        out.append(line_svg(tx, y, wrap_rich(f"**{title}**", "JBMono", BODY_PX, max_w)[0]))
-        tag_x = tx + width("JBMono", title, BODY_PX) + 14
+        title_lines = wrap_rich(f"**{title}**", "JBMono", BODY_PX, max_w)
+        for k, line in enumerate(title_lines):
+            y += BODY_LEAD if k else 0
+            out.append(line_svg(tx, y, line))
+        last = " ".join("".join(t for t, _ in word) for word in title_lines[-1])
+        tag_x = tx + width("JBMono", last, BODY_PX) + 14
+        if tag_x + len(rules_points(house, pts)) * (MONO_CW * 11.5 + 1.5) > w - 8:  # no room: the points go below
+            y += BODY_LEAD - 4
+            tag_x = tx
         cls = f"pts h-{house.lower()}"
         if pts >= 1000:
             out.append(f'<text class="{cls}" x="{tag_x:.0f}" y="{y}" filter="url(#hglow)" opacity=".8">{rules_points(house, pts)}</text>')
@@ -1289,6 +1321,7 @@ def main():
         "divider.svg": divider(),
         "btn-howler.svg": howler(),
         "howler-letter.svg": letter(out / "howler-envelope.jpg", out / "howler-burst.jpg"),
+        "howler-letter-m.svg": letter(out / "howler-envelope.jpg", out / "howler-burst.jpg", MOBILE_W),
     }
     for stem, (alt, w, h) in ILLUSTRATIONS.items():
         files[f"illus-{stem}.svg"] = illustration(out / f"illus-{stem}.jpg", alt, w, h)
@@ -1299,8 +1332,11 @@ def main():
     files["h-hello-hand.svg"] = hello_hand()
     files["quote-thought.svg"] = kdoc_quote()
     files["intro.svg"] = intro_panel()
+    files["intro-m.svg"] = intro_panel(MOBILE_W)
     files["night-shift.svg"] = night_panel(out / "illus-night-shift.jpg")
+    files["night-shift-m.svg"] = night_panel(out / "illus-night-shift.jpg", MOBILE_W)
     files["house-rules.svg"] = rules_panel()
+    files["house-rules-m.svg"] = rules_panel(MOBILE_W)
     files["angie-kt.svg"] = code_panel()
     for stem, (title, tail, size, *icon) in HEADINGS.items():
         for theme in ("dark", "light"):
