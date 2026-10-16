@@ -43,6 +43,7 @@ HEADINGS = {  # file stem: (title, muted tail, size[, crest])
 
 BRAND = f'<linearGradient id="brand" x1="0" x2="1"><stop offset="0" stop-color="{FUCHSIA}"/><stop offset="1" stop-color="{ORANGE}"/></linearGradient>'
 REDUCED = "@media (prefers-reduced-motion:reduce){*{animation:none!important}}"
+BODY_PX, BODY_LEAD = 14.5, 24  # every paragraph: intro, Howler letter, night shift, house guardrails
 
 
 # ---------- fonts
@@ -51,6 +52,7 @@ def font_face(family, text):
     opts = fsub.Options()
     opts.layout_features = FEATURES[family]
     font = TTFont(FONT_FILES[family])
+    font.recalcTimestamp = False  # keep the font's own date, so regenerating doesn't change every SVG
     missing = {c for c in text if ord(c) not in font.getBestCmap() and not c.isspace()}
     if missing:
         print(f"warning: {family} lacks {''.join(sorted(missing))}", file=sys.stderr)
@@ -679,7 +681,7 @@ def line_svg(x, y, line, cls="p"):
 def letter(envelope_jpg, burst_jpg):
     """The Howler opens: the envelope shakes, bursts into sparks over the burst scene, the shout slams in
     and the letter reveals line by line. Everything stays afterwards, so the letter can be reread."""
-    w, pad, body_px, lead = 860, 48, 16, 27
+    w, pad, body_px, lead = 860, 48, BODY_PX, BODY_LEAD + 1
     band_h, cx, cy = 360, 430, 190
     max_w = w - 2 * pad
     t_burst, t_shout = 2.0, 2.4
@@ -882,7 +884,7 @@ def intro_plain():
 def intro_panel():
     """The intro in JetBrains Mono, one style throughout, no card and no bar (the bar is the cards' accent);
     same margins as the night-shift text."""
-    w, pad, tx, size, lead = 860, 6, 6, 16.5, 28
+    w, pad, tx, size, lead = 860, 6, 6, BODY_PX, BODY_LEAD + 1
     max_w = w - tx - 8
     y, out = pad, []
     for i, para in enumerate(INTRO):
@@ -926,7 +928,6 @@ RULES = [
     "**Clarity above all.** Code is read far more often than it's written: by my team, by future me, and now by agents too.",
     "**Agents earn their merges.** Spec → contracts → code → gates → PR. No receipt, no “tests pass”.",
 ]
-BODY_PX, BODY_LEAD = 16, 26
 
 
 def strip_marks(text):
