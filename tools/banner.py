@@ -317,6 +317,16 @@ def phoenix_feather():
     return svg, p2
 
 
+TIP_CSS = (".tip{transform-box:fill-box;transform-origin:center;animation:tip 1.8s ease-in-out infinite}"
+           "@keyframes tip{50%{transform:scale(.6);opacity:.7}}")
+
+
+def magic_tip(x, y, r=5):
+    """The fuchsia spark at the wand's tip: the one magical accent every illustrated crest shares."""
+    return (f'<g class="tip"><circle cx="{x}" cy="{y}" r="{r}" fill="{FUCHSIA}" opacity=".45" filter="url(#tight)"/>'
+            f'<path d="{sparkle(x, y, r)}" fill="#fff4fe"/></g>')
+
+
 def wand_crest(h, dark):
     """A wand crossing a phoenix feather (Harry's wand core), for the "Wand cores" title.
     Returns (svg, defs, css, width)."""
@@ -327,14 +337,12 @@ def wand_crest(h, dark):
            f'<g transform="translate(48 0) scale(-1 1)"><g class="flame">{glow}{feather}</g></g>'
            f'<path d="M6 40 L42 6" stroke="url(#wood)" stroke-width="3.4" stroke-linecap="round"/>'
            f'<path d="M6 40 L13 33" stroke="#4a2c13" stroke-width="5" stroke-linecap="round"/>'
-           f'<g class="tip"><circle cx="42" cy="6" r="5" fill="{FUCHSIA}" opacity=".45" filter="url(#tight)"/>'
-           f'<path d="{sparkle(42, 6, 5)}" fill="#fff4fe"/></g></g>')
+           f'{magic_tip(42, 6)}</g>')
     defs = (f'<linearGradient id="fire" gradientUnits="userSpaceOnUse" x1="9" y1="39" x2="38" y2="4"><stop offset="0" stop-color="#dc2626"/>'
             f'<stop offset=".5" stop-color="{ORANGE}"/><stop offset="1" stop-color="#fde68a"/></linearGradient>'
             f'<linearGradient id="wood" x1="0" y1="1" x2="1" y2="0"><stop offset="0" stop-color="#6b3f1d"/><stop offset="1" stop-color="#d9b07a"/></linearGradient>')
     css = (".flame{animation:flame 2.2s ease-in-out infinite alternate}@keyframes flame{from{opacity:.85}to{opacity:1}}"
-           ".tip{transform-box:fill-box;transform-origin:center;animation:tip 1.8s ease-in-out infinite}"
-           "@keyframes tip{50%{transform:scale(.6);opacity:.7}}"
+           + TIP_CSS +
            ".ember{opacity:0;animation:ember 1.8s ease-out infinite}"
            "@keyframes ember{0%{opacity:0;transform:translate(0,0)}25%{opacity:1}100%{opacity:0;transform:translate(2px,-7px)}}")
     return svg, defs, css, round(48 * k)
@@ -370,87 +378,79 @@ def day_night_crest(h, dark):
 
 
 def lock_crest(h, dark):
-    """An open padlock for the public repos: the opposite of the private cards' locks, and Alohomora (the
-    README's secret door) at work. The shackle pops now and then and the keyhole glows with sparks.
+    """An old brass padlock, shackle open, keyhole lit from inside and the wand's spark on it: Alohomora
+    for the public repos (the private cards carry closed locks). Drawn like the wand crest, as an object.
     Returns (svg, defs, css, width)."""
     k = h / 42  # drawn on a 48x42 grid
-    shackle = '<path class="shackle" d="M16 25 V11 A8 8 0 0 1 32 11 V13" fill="none" stroke="url(#term)" stroke-width="3.4" stroke-linecap="round"/>'
-    body = f'<rect x="10" y="19" width="28" height="21" rx="5" fill="{"#1a0f24" if dark else "#fdf4ff"}" stroke="url(#term)" stroke-width="2.2"/>'
-    keyhole = "M24 24.2a3 3 0 0 1 1.9 5.3L27 35H21l1.1-5.5A3 3 0 0 1 24 24.2Z"
-    light = "#fde68a" if dark else "#f59e0b"
-    sparks = "".join(f'<path class="spark" style="animation-delay:{d}s" d="{sparkle(x, y, sz)}"/>'
-                     for x, y, sz, d in ((39, 9, 3.4, 0), (44, 18, 2.2, .7), (36, 3.5, 2, 1.4)))
-    svg = (f'<g transform="scale({k:.3f}) translate(-6 0)">'  # drawn centred on x=24; nudged left like the other crests
-           f'<g filter="url(#tight)" opacity="{.65 if dark else .25}">{shackle}{body}</g>{shackle}{body}'
-           f'<circle class="glowhole" cx="24" cy="30" r="6" fill="{light}" filter="url(#tight)"/>'
-           f'<path d="{keyhole}" fill="{light}"/>'
-           f'<g fill="{"#fff4fe" if dark else "#a855f7"}">{sparks}</g></g>')
-    defs = (f'<linearGradient id="term" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="{FUCHSIA}"/>'
-            f'<stop offset="1" stop-color="{ORANGE}"/></linearGradient>')
+    shackle = "M14 26 V12.5 A8 8 0 0 1 30 12.5 V15"
+    keyhole = "M22 24.6a3 3 0 0 1 1.9 5.3L25 35.5H19l1.1-5.6A3 3 0 0 1 22 24.6Z"
+    rivets = "".join(f'<circle cx="{x}" cy="{y}" r="1" fill="#78350f"/><circle cx="{x - .3}" cy="{y - .3}" r=".4" fill="#fef3c7" opacity=".7"/>'
+                     for x, y in ((11.5, 22.5), (32.5, 22.5), (11.5, 36.5), (32.5, 36.5)))
+    svg = (f'<g transform="scale({k:.3f})">'
+           f'<g class="shackle"><path d="{shackle}" fill="none" stroke="#4b5563" stroke-width="4.6" stroke-linecap="round"/>'
+           f'<path d="{shackle}" fill="none" stroke="url(#steel)" stroke-width="3.4" stroke-linecap="round"/>'
+           f'<path d="M15.2 24 V12.8 A6.8 6.8 0 0 1 22 6" fill="none" stroke="#fff" stroke-opacity=".55" stroke-width=".8" stroke-linecap="round"/></g>'
+           f'<rect x="8" y="19" width="28" height="21" rx="4.5" fill="url(#brass)"/>'
+           f'<rect x="9.8" y="20.8" width="24.4" height="17.4" rx="3" fill="none" stroke="#fef3c7" stroke-opacity=".4" stroke-width=".8"/>'
+           f'<rect x="8" y="19" width="28" height="21" rx="4.5" fill="none" stroke="#78350f" stroke-width="1"/>'
+           f'{rivets}'
+           f'<circle class="glowhole" cx="22" cy="30" r="5" fill="#fde68a" filter="url(#tight)"/>'
+           f'<path d="{keyhole}" fill="#2a1608"/><path d="{keyhole}" fill="#fde68a" class="glowhole"/>'
+           f'{magic_tip(36, 12)}</g>')
+    defs = ('<linearGradient id="brass" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#fde68a"/>'
+            '<stop offset=".45" stop-color="#d97706"/><stop offset="1" stop-color="#78350f"/></linearGradient>'
+            '<linearGradient id="steel" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#e5e7eb"/>'
+            '<stop offset=".5" stop-color="#9ca3af"/><stop offset="1" stop-color="#6b7280"/></linearGradient>')
     css = (".shackle{animation:pop 3.2s ease-in-out infinite}"
-           "@keyframes pop{0%,55%,100%{transform:translateY(0)}65%{transform:translateY(-3.5px)}75%{transform:translateY(0)}82%{transform:translateY(-1.2px)}88%{transform:translateY(0)}}"
-           ".glowhole{opacity:.35;animation:hole 3.2s ease-in-out infinite}"
-           "@keyframes hole{0%,55%,100%{opacity:.3}68%{opacity:.85}}"
-           ".spark{transform-box:fill-box;transform-origin:center;animation:spark 2.4s ease-in-out infinite}"
-           "@keyframes spark{50%{transform:scale(.4);opacity:.4}}")
+           "@keyframes pop{0%,55%,100%{transform:translateY(0)}65%{transform:translateY(-3px)}75%{transform:translateY(0)}82%{transform:translateY(-1px)}88%{transform:translateY(0)}}"
+           ".glowhole{opacity:.25;animation:hole 3.2s ease-in-out infinite}@keyframes hole{0%,55%,100%{opacity:.25}68%{opacity:.9}}"
+           + TIP_CSS)
     return svg, defs, css, round(48 * k)
 
 
 HOUSE_INK = {"Gryffindor": ("#dc2626", "#f87171"), "Slytherin": ("#16a34a", "#4ade80"),
              "Ravenclaw": ("#2563eb", "#60a5fa"), "Hufflepuff": ("#ca8a04", "#facc15")}
-HOUSES = (("Gryffindor", 20.5), ("Slytherin", 31), ("Ravenclaw", 29), ("Hufflepuff", 29.5))  # gem level: Gryffindor wins
-
-
-def mix(c1, c2, t):
-    """Blend two #rrggbb colours: t=0 gives c1, t=1 gives c2."""
-    a, b = (int(c1[i:i + 2], 16) for i in (1, 3, 5)), (int(c2[i:i + 2], 16) for i in (1, 3, 5))
-    return "#" + "".join(f"{round(x + (y - x) * t):02x}" for x, y in zip(a, b))
 
 
 def points_crest(h, dark):
-    """The four house-points hourglasses of the Great Hall: faceted gems heaped under a trickle, glass with
-    a glint, gold caps with finials and a twinkle on the pile. Gryffindor leads. A scoreboard, so also a
-    tiny bar chart (guardrails are measured). Returns (svg, defs, css, width)."""
+    """A house-points hourglass, Gryffindor's after that +1000: wooden frame like the wand, glass bulbs,
+    faceted rubies heaped under a trickle, and the wand's spark on the frame. Returns (svg, defs, css, width)."""
     k = h / 42  # drawn on a 48x42 grid
-    glass_line = "#e9d5ff" if dark else "#7e22ce"
-    defs, glow, front = [], [], []
-    defs.append('<pattern id="facets" width="3" height="3" patternUnits="userSpaceOnUse">'
-                '<path d="M1.5 0L3 1.5L1.5 3L0 1.5Z" fill="#fff" fill-opacity=".22"/></pattern>'
-                '<linearGradient id="gold" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fef3c7"/>'
-                '<stop offset=".5" stop-color="#f59e0b"/><stop offset="1" stop-color="#92400e"/></linearGradient>')
-    for i, (house, level) in enumerate(HOUSES):
-        gem = HOUSE_INK[house][1]
-        cx = 6 + i * 12
-        l, r = cx - 4.5, cx + 4.5
-        shape = (f"M{l} 4.5 H{r} V11 Q{r} 15.5 {cx + 1} 17.5 Q{r} 19.5 {r} 24 V37.5 H{l} V24 "
-                 f"Q{l} 19.5 {cx - 1} 17.5 Q{l} 15.5 {l} 11 Z")
-        pile = f"M{l} {level + 2} Q{cx} {level - 3} {r} {level + 2} V38 H{l} Z"
-        reserve = f"M{l} 6 H{r} V10 Q{cx} 15 {l} 10 Z"
-        defs.append(f'<clipPath id="tube{i}"><path d="{shape}"/></clipPath>'
-                    f'<linearGradient id="gem{i}" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="{mix(gem, "#ffffff", .45)}"/>'
-                    f'<stop offset=".45" stop-color="{gem}"/><stop offset="1" stop-color="{mix(gem, "#000000", .45)}"/></linearGradient>')
-        body = (f'<path d="{shape}" fill="{"#ffffff" if dark else "#f5f3ff"}" fill-opacity="{.06 if dark else .6}"/>'
-                f'<g clip-path="url(#tube{i})">'
-                f'<path d="{reserve}" fill="url(#gem{i})"/><path d="{reserve}" fill="url(#facets)"/>'
-                f'<path d="M{cx} 15V{level}" stroke="{gem}" stroke-width=".7" opacity=".85"/>'
-                f'<path d="{pile}" fill="url(#gem{i})"/><path d="{pile}" fill="url(#facets)"/></g>')
-        glow.append(f'<path d="{pile}" fill="{gem}" clip-path="url(#tube{i})"/>')
-        front.append(body +
-                     f'<path d="{shape}" fill="none" stroke="{glass_line}" stroke-width="1" stroke-opacity=".75"/>'
-                     f'<path d="M{l + 1.4} 6.5V10.5M{l + 1.4} 25V35.5" stroke="#fff" stroke-opacity=".45" stroke-width=".8" stroke-linecap="round"/>'
-                     f'<circle class="drop" style="animation-delay:{i * .35:.2f}s;--fall:{level - 17:.1f}px" cx="{cx}" cy="16.5" r=".9" fill="{mix(gem, "#ffffff", .4)}"/>'
-                     f'<path class="twinkle" style="animation-delay:{i * .6:.1f}s" d="{sparkle(cx + 1.6, level + 4.5, 1.6)}" fill="#fff"/>'
-                     f'<rect x="{l - 1.2}" y="2.2" width="11.4" height="2.6" rx="1.2" fill="url(#gold)"/>'
-                     f'<circle cx="{cx}" cy="1.4" r="1.2" fill="url(#gold)"/>'
-                     f'<rect x="{l - 1.2}" y="37.2" width="11.4" height="2.8" rx="1.2" fill="url(#gold)"/>'
-                     f'<rect x="{l + .5}" y="39.8" width="8" height="1.4" rx=".6" fill="url(#gold)" opacity=".8"/>')
+    glass = ("M13.5 6.5 H30.5 V9 C30.5 15 24 17 23.2 21 C24 25 30.5 27 30.5 33 V35.5 H13.5 V33 "
+             "C13.5 27 20 25 20.8 21 C20 17 13.5 15 13.5 9 Z")
+    top_sand = "M12 12.5 Q22 16 32 12.5 V24 H12 Z"
+    pile = "M12 37 V31 Q22 22.5 32 31 V37 Z"
     svg = (f'<g transform="scale({k:.3f})">'
-           f'<g filter="url(#tight)" opacity="{.7 if dark else .25}">{"".join(glow)}</g>{"".join(front)}</g>')
-    css = (".drop{animation:drop 1.4s ease-in infinite}"
-           "@keyframes drop{0%{transform:translateY(0);opacity:1}90%{opacity:1}100%{transform:translateY(var(--fall));opacity:0}}"
+           f'<path d="{glass}" fill="#ffffff" fill-opacity="{.08 if dark else .5}"/>'
+           f'<g clip-path="url(#glass)">'
+           f'<path d="{top_sand}" fill="url(#ruby)"/><path d="{top_sand}" fill="url(#facets)"/>'
+           f'<path d="M22 21V29" stroke="#ef4444" stroke-width=".9"/>'
+           f'<path d="{pile}" fill="url(#ruby)"/><path d="{pile}" fill="url(#facets)"/></g>'
+           f'<circle class="drop" cx="22" cy="21.5" r="1" fill="#fecaca"/>'
+           f'<path d="{glass}" fill="none" stroke="#f5f3ff" stroke-opacity=".7" stroke-width=".9"/>'
+           f'<path d="M15.3 9.5 C15.5 12.5 17 14.5 19 16.5 M15.3 34 V30.5" fill="none" stroke="#fff" stroke-opacity=".5" stroke-width=".8" stroke-linecap="round"/>'
+           f'<path class="twinkle" d="{sparkle(25, 30.5, 1.8)}" fill="#fff"/>'
+           f'<rect x="9.4" y="5" width="2.6" height="32" rx="1.3" fill="url(#wood2)"/>'
+           f'<rect x="32" y="5" width="2.6" height="32" rx="1.3" fill="url(#wood2)"/>'
+           f'<rect x="7" y="2.5" width="30" height="4" rx="2" fill="url(#wood)"/>'
+           f'<rect x="7" y="35.5" width="30" height="4" rx="2" fill="url(#wood)"/>'
+           f'<path d="M8.5 3.4 H35.5 M8.5 36.4 H35.5" stroke="#f3d9b1" stroke-opacity=".45" stroke-width=".7" stroke-linecap="round"/>'
+           f'{magic_tip(37.5, 4.5)}</g>')
+    defs = (f'<clipPath id="glass"><path d="{glass}"/></clipPath>'
+            '<linearGradient id="ruby" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fecaca"/>'
+            '<stop offset=".4" stop-color="#ef4444"/><stop offset="1" stop-color="#7f1d1d"/></linearGradient>'
+            '<pattern id="facets" width="3" height="3" patternUnits="userSpaceOnUse">'
+            '<path d="M1.5 0L3 1.5L1.5 3L0 1.5Z" fill="#fff" fill-opacity=".25"/></pattern>'
+            '<linearGradient id="wood" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#d9b07a"/>'
+            '<stop offset="1" stop-color="#6b3f1d"/></linearGradient>'
+            '<linearGradient id="wood2" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#d9b07a"/>'
+            '<stop offset="1" stop-color="#6b3f1d"/></linearGradient>')
+    css = (".drop{animation:drop 1.1s ease-in infinite}"
+           "@keyframes drop{0%{transform:translateY(0);opacity:1}90%{opacity:1}100%{transform:translateY(7px);opacity:0}}"
            ".twinkle{transform-box:fill-box;transform-origin:center;opacity:0;animation:twinkle 2.4s ease-in-out infinite}"
-           "@keyframes twinkle{0%,60%,100%{opacity:0;transform:scale(.3)}75%{opacity:1;transform:scale(1)}}")
-    return svg, "".join(defs), css, round(48 * k)
+           "@keyframes twinkle{0%,60%,100%{opacity:0;transform:scale(.3)}75%{opacity:1;transform:scale(1)}}"
+           + TIP_CSS)
+    return svg, defs, css, round(48 * k)
 
 
 CRESTS = {"wand": wand_crest, "daynight": day_night_crest, "lock": lock_crest, "points": points_crest}
@@ -1068,7 +1068,7 @@ def rules_plain():
 ANGIE_KT = """@OptIn(ExperimentalMagicApi::class)
 object Angie : Technomancer {
     override val wand = Kotlin
-    override val spareWands = listOf(Java, Python)
+    override val spareWand = Java
     override val wandCores = mapOf(
         "UI" to listOf("Jetpack Compose", "XML views", "Material 3"),
         "Multiplatform" to listOf("Kotlin Multiplatform", "Compose Multiplatform"),
