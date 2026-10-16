@@ -6,8 +6,7 @@ text{font-family:'JBMono',monospace;font-variant-ligatures:none}.num{font-size:1
 .cmt{font-family:'JBMonoItalic',monospace;font-size:11.5px;fill:#7A7E85}
 .hash{font-size:20px;font-weight:700;fill:#e879f9}.ti{font:600 21px 'Oxanium',sans-serif;fill:#ffe4fc}
 .d{font-size:12px;fill:#BCBEC4}.tab{font-size:11.5px;fill:#DFE1E5}
-.sb{font-size:10.5px;letter-spacing:.5px;fill:#9da0a8}.lang{font-size:10.5px;fill:#9da0a8}
-.caret{animation:blink 1.1s steps(1) infinite}@keyframes blink{50%{opacity:0}}@media (prefers-reduced-motion:reduce){*{animation:none!important}}</style>
+.sb{font-size:10.5px;letter-spacing:.5px;fill:#9da0a8}.lang{font-size:10.5px;fill:#9da0a8}</style>
 <g clip-path="url(#win)">
 <rect x="8" y="8" width="424" height="189" fill="#1E1F22"/>
 <rect x="8" y="8" width="424" height="30" fill="#2B2D30"/>
@@ -16,7 +15,6 @@ text{font-family:'JBMono',monospace;font-variant-ligatures:none}.num{font-size:1
 <g transform="translate(80 19)"><path d="M0 0H11L5.5 5.5L11 11H0Z" fill="url(#kt)"/></g><text class="tab" x="98" y="29">ShoppingAtScale.kt</text><g transform="translate(229.2 18)"><path d="M2.2 5.2V3.6a2.6 2.6 0 0 1 5.2 0V5.2" fill="none" stroke="#fdba74" stroke-width="1.3"/><rect x=".6" y="5" width="8.4" height="6.4" rx="1.4" fill="#fdba74"/><circle cx="4.8" cy="8" r=".9" fill="#1E1F22"/></g>
 <rect x="68" y="36" width="178" height="2" fill="#e879f9"/>
 <text class="num" x="30" y="60" text-anchor="end">1</text><text class="cmt" x="44" y="60">// DAY SHIFT · ALTEN</text><text class="num" x="30" y="83" text-anchor="end">2</text><text x="44" y="85"><tspan class="hash"># </tspan><tspan class="ti">Shopping at scale</tspan></text><text class="num" x="30" y="108" text-anchor="end">3</text><text class="d" x="44" y="108">Feature lead on a retail app used by millions:</text><text class="num" x="30" y="127" text-anchor="end">4</text><text class="d" x="44" y="127">shipped the new shopping cart, moved analytics to</text><text class="num" x="30" y="146" text-anchor="end">5</text><text class="d" x="44" y="146">GA4 and brought my AI-agent harness into the team.</text>
-<rect class="caret" x="406.0" y="135" width="1.4" height="14" fill="#BCBEC4"/>
 <rect x="8" y="173" width="424" height="24" fill="#2B2D30"/>
 <text class="sb" x="22" y="189">CLIENT WORK · KOTLIN · COMPOSE</text>
 <text class="lang" x="418" y="189" text-anchor="end">Kotlin</text>

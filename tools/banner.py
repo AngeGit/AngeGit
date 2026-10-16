@@ -174,7 +174,8 @@ def banner(face, theme):
     clip1, t1 = typing("ty1", x + 20, box_y + 46, sum(map(len, CMD)), 2.4)
     clip2, t2 = typing("ty2", x + 20, box_y + 70, len(OUT), t1 + .35)
     cursor_x = x + 20 + len(OUT) * MONO_CW * MONO_PX + 5
-    sign = "".join(neon_text("sign", sx + 23, 112 + i * 38, ch, "#ffe4c7", ORANGE, wide=False, anchor="middle")
+    sign = "".join((lambda tube: f'<g class="lflick">{tube}</g>' if ch == "T" else tube)(  # the T is a bad tube
+                       neon_text("sign", sx + 23, 112 + i * 38, ch, "#ffe4c7", ORANGE, wide=False, anchor="middle"))
                    for i, ch in enumerate("KOTLIN"))
     name_core, name_glow, name_halo = t["name"]
     name_svg = (neon_text("name", x - 3, 178, NAME, name_core, name_glow, wide=name_halo, flick=NAME.index("t")) if theme == "dark"
@@ -198,10 +199,12 @@ def banner(face, theme):
  @keyframes fade{{from{{opacity:0}}to{{opacity:1}}}}
  .breathe{{animation:breathe 7s ease-in-out infinite alternate}}
  @keyframes breathe{{from{{opacity:.7}}to{{opacity:1}}}}
- .flick{{animation:flick 9s 4s infinite}}
- @keyframes flick{{0%,88%,90%,94%,100%{{fill-opacity:1}}89%{{fill-opacity:.12}}92%{{fill-opacity:.3}}}}
- .signflick{{animation:sflick 11s 6s infinite}}
- @keyframes sflick{{0%,60%,62%,65%,100%{{opacity:1}}61%,63%{{opacity:.35}}}}
+ .flick{{animation:flick 6s 2s infinite}}
+ @keyframes flick{{0%,70%,100%{{fill-opacity:1}}71%{{fill-opacity:.05}}72.5%{{fill-opacity:1}}74%{{fill-opacity:.1}}75%{{fill-opacity:.7}}76%,80%{{fill-opacity:.04}}81%{{fill-opacity:1}}}}
+ .signflick{{animation:sflick 7s 3s infinite}}
+ @keyframes sflick{{0%,50%,100%{{opacity:1}}51%{{opacity:.15}}52%{{opacity:1}}53.5%{{opacity:.2}}55%{{opacity:.85}}56%,59%{{opacity:.1}}60%{{opacity:1}}}}
+ .lflick{{animation:lflick 4.3s 1s infinite}}
+ @keyframes lflick{{0%,62%,100%{{opacity:1}}63%{{opacity:.1}}64%{{opacity:.9}}66%,71%{{opacity:.05}}72%{{opacity:1}}}}
  .blink{{animation:blink 6s steps(1) infinite}}
  @keyframes blink{{0%,70%{{opacity:.6}}71%,100%{{opacity:.06}}}}
  .rain{{animation:fall 1.5s linear infinite}}
@@ -509,7 +512,7 @@ CARD_DESC_PX, CARD_LEAD = 12, 19
 
 def card(stem, tag, title, desc, foot):
     """A project as a file open in the editor: window dots, a tab with the file, the tag as a comment,
-    the title as a heading, the description with a blinking caret, and the footer in the status bar.
+    the title as a heading, the description, and the footer in the status bar.
     Always dark, like Angie.kt. Every card gets the height of the longest description so the grid lines up."""
     w, m = 440, 8
     fname, lang, private = CARD_FILES[stem]
@@ -527,7 +530,6 @@ def card(stem, tag, title, desc, foot):
             body.append(f'<text x="{code_x}" y="{y + 2}"><tspan class="hash"># </tspan><tspan class="ti">{xml(text)}</tspan></text>')
         else:
             body.append(f'<text class="{cls}" x="{code_x}" y="{y}">{xml(text)}</text>')
-    caret_x = code_x + width("JBMono", lines[-1], CARD_DESC_PX) + 2
     name_w = width("JBMono", fname, 11.5)
     tab_w = name_w + 40 + (14 if private else 0)
     lock = (f'<g transform="translate({m + 90 + name_w + 7:.1f} {m + 10})"><path d="M2.2 5.2V3.6a2.6 2.6 0 0 1 5.2 0V5.2" fill="none" stroke="#fdba74" stroke-width="1.3"/>'
@@ -548,8 +550,7 @@ text{{font-family:'JBMono',monospace;font-variant-ligatures:none}}.num{{font-siz
 .cmt{{font-family:'JBMonoItalic',monospace;font-size:11.5px;fill:{AS["cmt"]}}}
 .hash{{font-size:20px;font-weight:700;fill:{FUCHSIA}}}.ti{{font:600 21px 'Oxanium',sans-serif;fill:{NEON_CORE}}}
 .d{{font-size:{CARD_DESC_PX}px;fill:{AS["text"]}}}.tab{{font-size:11.5px;fill:{AS["tab"]}}}
-.sb{{font-size:10.5px;letter-spacing:.5px;fill:{"#fdba74" if cta else "#9da0a8"}}}.lang{{font-size:10.5px;fill:#9da0a8}}
-.caret{{animation:blink 1.1s steps(1) infinite}}@keyframes blink{{50%{{opacity:0}}}}{REDUCED}</style>
+.sb{{font-size:10.5px;letter-spacing:.5px;fill:{"#fdba74" if cta else "#9da0a8"}}}.lang{{font-size:10.5px;fill:#9da0a8}}</style>
 <g clip-path="url(#win)">
 <rect x="{m}" y="{m}" width="{w - 2 * m}" height="{h - 2 * m}" fill="{AS["bg"]}"/>
 <rect x="{m}" y="{m}" width="{w - 2 * m}" height="30" fill="{AS["sep"]}"/>
@@ -558,7 +559,6 @@ text{{font-family:'JBMono',monospace;font-variant-ligatures:none}}.num{{font-siz
 {file_icon}<text class="tab" x="{m + 90}" y="{m + 21}">{xml(fname)}</text>{lock}
 <rect x="{m + 60}" y="{m + 28}" width="{tab_w:.0f}" height="2" fill="{FUCHSIA}"/>
 {"".join(body)}
-<rect class="caret" x="{caret_x:.1f}" y="{y - 11}" width="1.4" height="14" fill="{AS["text"]}"/>
 <rect x="{m}" y="{sb}" width="{w - 2 * m}" height="24" fill="{AS["sep"]}"/>
 <text class="sb" x="{m + 14}" y="{sb + 16}">{xml(foot)}</text>
 <text class="lang" x="{w - m - 14}" y="{sb + 16}" text-anchor="end">{lang}</text>
@@ -869,20 +869,16 @@ def kdoc_quote():
         y = pad + 13 + i * lead
         runs = "".join(f'<tspan class="{cls}">{xml(t)}</tspan>' for t, cls in row)
         lines.append(f'<text x="{pad}" y="{y}" xml:space="preserve">{runs}</text>')
-    last = sum(len(t) for t, _ in rows[-1])
-    caret_y = pad + 13 + (len(rows) - 1) * lead
     mono_text = "".join(t for row in rows for t, cls in row if cls == "a")
     italic_text = "".join(t for row in rows for t, cls in row if cls != "a")
-    theme = (".c{fill:#6e7781}.q{fill:#a21caf}.a{fill:#c2410c}.caret{fill:#a21caf}"
-             f"@media (prefers-color-scheme:dark){{.c{{fill:#8b949e}}.q{{fill:#f0abfc}}.a{{fill:{ORANGE}}}.caret{{fill:{FUCHSIA}}}}}")
+    theme = (".c{fill:#6e7781}.q{fill:#a21caf}.a{fill:#c2410c}"
+             f"@media (prefers-color-scheme:dark){{.c{{fill:#8b949e}}.q{{fill:#f0abfc}}.a{{fill:{ORANGE}}}}}")
     return f"""{svg_open(w, h, quote_plain())}
 <style>{font_face("JBMono", mono_text)}{font_face("JBMonoItalic", italic_text)}
 text{{font:400 {size}px 'JBMonoItalic',monospace;font-variant-ligatures:none}}
 .a{{font-family:'JBMono',monospace;font-style:normal;font-weight:600}}.q{{font-weight:500}}
-.caret{{animation:blink 1.1s steps(1) infinite}}@keyframes blink{{50%{{opacity:0}}}}
-{theme}{REDUCED}</style>
+{theme}</style>
 {"".join(lines)}
-<rect class="caret" x="{pad + last * cw + 3:.0f}" y="{caret_y - 11}" width="1.6" height="13"/>
 </svg>"""
 
 
@@ -1120,7 +1116,8 @@ def highlight(line):
 
 def code_panel():
     """The character sheet as an Android Studio editor: tab with the Kotlin icon, gutter with
-    line numbers and override markers, the current line highlighted and a blinking caret."""
+    line numbers and override markers, the current line highlighted and a still caret (only the banner's
+    lumos and the farewell's nox blink)."""
     w, size, lead = 860, 13, 21
     cw = MONO_CW * size
     lines = ANGIE_KT.split("\n")
@@ -1152,14 +1149,13 @@ text{{font:400 {size}px 'JBMono',monospace;font-variant-ligatures:none;fill:{AS[
 .k-n{{font-size:12.5px;fill:{AS["gutter"]}}}.tabtxt{{font-size:13px;fill:{AS["tab"]}}}
 .k-kw{{fill:{AS["kw"]}}}.k-str{{fill:{AS["str"]}}}.k-ann{{fill:{AS["ann"]}}}.k-fn{{fill:{AS["fn"]}}}.k-prop{{fill:{AS["prop"]}}}
 .k-cmt{{fill:{AS["cmt"]};font-family:'JBMonoItalic',monospace}}.k-call{{font-family:'JBMonoItalic',monospace}}
-.caret{{animation:blink 1.1s steps(1) infinite}}@keyframes blink{{50%{{opacity:0}}}}
-{REDUCED}</style>
+</style>
 <rect width="{w}" height="{h}" rx="10" fill="{AS["bg"]}"/>
 <rect y="{tab_h - 1}" width="{w}" height="1" fill="{AS["sep"]}"/>
 {kotlin_icon}<text class="tabtxt" x="36" y="22">Angie.kt</text>
 <rect x="8" y="{tab_h - 3}" width="98" height="2" rx="1" fill="{AS["accent"]}"/>
 {"".join(out)}
-<rect class="caret" x="{caret_x:.1f}" y="{caret_y - 13}" width="1.6" height="17" fill="{AS["text"]}"/>
+<rect x="{caret_x:.1f}" y="{caret_y - 13}" width="1.6" height="17" fill="{AS["text"]}"/>
 </svg>"""
 
 

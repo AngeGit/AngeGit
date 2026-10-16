@@ -25,10 +25,12 @@
  @keyframes fade{from{opacity:0}to{opacity:1}}
  .breathe{animation:breathe 7s ease-in-out infinite alternate}
  @keyframes breathe{from{opacity:.7}to{opacity:1}}
- .flick{animation:flick 9s 4s infinite}
- @keyframes flick{0%,88%,90%,94%,100%{fill-opacity:1}89%{fill-opacity:.12}92%{fill-opacity:.3}}
- .signflick{animation:sflick 11s 6s infinite}
- @keyframes sflick{0%,60%,62%,65%,100%{opacity:1}61%,63%{opacity:.35}}
+ .flick{animation:flick 6s 2s infinite}
+ @keyframes flick{0%,70%,100%{fill-opacity:1}71%{fill-opacity:.05}72.5%{fill-opacity:1}74%{fill-opacity:.1}75%{fill-opacity:.7}76%,80%{fill-opacity:.04}81%{fill-opacity:1}}
+ .signflick{animation:sflick 7s 3s infinite}
+ @keyframes sflick{0%,50%,100%{opacity:1}51%{opacity:.15}52%{opacity:1}53.5%{opacity:.2}55%{opacity:.85}56%,59%{opacity:.1}60%{opacity:1}}
+ .lflick{animation:lflick 4.3s 1s infinite}
+ @keyframes lflick{0%,62%,100%{opacity:1}63%{opacity:.1}64%{opacity:.9}66%,71%{opacity:.05}72%{opacity:1}}
  .blink{animation:blink 6s steps(1) infinite}
  @keyframes blink{0%,70%{opacity:.6}71%,100%{opacity:.06}}
  .rain{animation:fall 1.5s linear infinite}
@@ -49,7 +51,7 @@
  <g class="signflick">
   <rect x="762" y="78" width="46" height="244" rx="12" fill="none" stroke="#fb923c" stroke-width="4" opacity=".5" filter="url(#neonTight)"/>
   <rect x="762" y="78" width="46" height="244" rx="12" fill="none" stroke="#ffd2a8" stroke-width="1.6"/>
-  <text class="sign" x="785" y="112" text-anchor="middle" fill="#fb923c" opacity=".95" filter="url(#neonTight)">K</text><text class="sign" x="785" y="112" text-anchor="middle" fill="#ffe4c7">K</text><text class="sign" x="785" y="150" text-anchor="middle" fill="#fb923c" opacity=".95" filter="url(#neonTight)">O</text><text class="sign" x="785" y="150" text-anchor="middle" fill="#ffe4c7">O</text><text class="sign" x="785" y="188" text-anchor="middle" fill="#fb923c" opacity=".95" filter="url(#neonTight)">T</text><text class="sign" x="785" y="188" text-anchor="middle" fill="#ffe4c7">T</text><text class="sign" x="785" y="226" text-anchor="middle" fill="#fb923c" opacity=".95" filter="url(#neonTight)">L</text><text class="sign" x="785" y="226" text-anchor="middle" fill="#ffe4c7">L</text><text class="sign" x="785" y="264" text-anchor="middle" fill="#fb923c" opacity=".95" filter="url(#neonTight)">I</text><text class="sign" x="785" y="264" text-anchor="middle" fill="#ffe4c7">I</text><text class="sign" x="785" y="302" text-anchor="middle" fill="#fb923c" opacity=".95" filter="url(#neonTight)">N</text><text class="sign" x="785" y="302" text-anchor="middle" fill="#ffe4c7">N</text>
+  <text class="sign" x="785" y="112" text-anchor="middle" fill="#fb923c" opacity=".95" filter="url(#neonTight)">K</text><text class="sign" x="785" y="112" text-anchor="middle" fill="#ffe4c7">K</text><text class="sign" x="785" y="150" text-anchor="middle" fill="#fb923c" opacity=".95" filter="url(#neonTight)">O</text><text class="sign" x="785" y="150" text-anchor="middle" fill="#ffe4c7">O</text><g class="lflick"><text class="sign" x="785" y="188" text-anchor="middle" fill="#fb923c" opacity=".95" filter="url(#neonTight)">T</text><text class="sign" x="785" y="188" text-anchor="middle" fill="#ffe4c7">T</text></g><text class="sign" x="785" y="226" text-anchor="middle" fill="#fb923c" opacity=".95" filter="url(#neonTight)">L</text><text class="sign" x="785" y="226" text-anchor="middle" fill="#ffe4c7">L</text><text class="sign" x="785" y="264" text-anchor="middle" fill="#fb923c" opacity=".95" filter="url(#neonTight)">I</text><text class="sign" x="785" y="264" text-anchor="middle" fill="#ffe4c7">I</text><text class="sign" x="785" y="302" text-anchor="middle" fill="#fb923c" opacity=".95" filter="url(#neonTight)">N</text><text class="sign" x="785" y="302" text-anchor="middle" fill="#ffe4c7">N</text>
  </g>
  
  <text class="comment fade" x="84" y="92">// technomancer.kt · Madrid, Spain · remote</text>
