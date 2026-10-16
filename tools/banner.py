@@ -37,7 +37,7 @@ MONO_PX, MONO_CW = 15, 0.6  # JetBrains Mono advance: 600/1000 em
 HEADINGS = {  # file stem: (title, muted tail, size[, crest])
     "shifts": ("Day & night shift", "what I build", 26, "daynight"),
     "unrestricted": ("Unrestricted section", "public repos", 26, "book"),
-    "house-rules": ("House guardrails", "how I work", 26, "hat"),
+    "house-rules": ("House guardrails", "how I work", 26, "points"),
     "wand-cores": ("Wand cores", "stack", 26, "wand"),
 }
 
@@ -366,33 +366,6 @@ def day_night_crest(h, dark):
     return svg, defs, css, round(48 * k)
 
 
-def hat_crest(h, dark):
-    """The Sorting Hat sitting on a neon terminal, thinking, for "House rules". Returns (svg, defs, css, width)."""
-    k = h / 42  # drawn on a 48x42 grid
-    frame = '<rect x="4" y="19" width="39" height="21" rx="4" fill="none" stroke="url(#term)" stroke-width="2.2"/>'
-    cone = ("M19 19.5 C20.5 14 23 9.5 26 6.5 C28 4.5 31 4 33.5 5.5 C35.5 6.8 36.8 9 37 11.5 "
-            "C35.5 9.8 33.5 9 31.5 9.6 C32.5 13 34.5 16.5 37 19.5 Z")
-    brim = "M14.5 20 Q28 24.5 41.5 20 Q28 16.5 14.5 20 Z"
-    crease = "M24.5 15 Q28 17.2 31.5 14.8 M25 11.6 Q26.5 10.8 28 11.6 M29.6 11.3 Q31 10.6 32.2 11.4"
-    svg = (f'<g transform="scale({k:.3f})">'
-           f'<rect x="4" y="19" width="39" height="21" rx="4" fill="{"#1a0f24" if dark else "#fdf4ff"}"/>'
-           f'<g filter="url(#tight)" opacity="{.7 if dark else .3}">{frame}</g>{frame}'
-           f'<path d="M10 25.5 L14.5 29 L10 32.5" fill="none" stroke="{FUCHSIA}" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"/>'
-           f'<rect class="cursor" x="17" y="31" width="8" height="2.4" rx="1" fill="{ORANGE}"/>'
-           f'<g transform="translate(28 20) scale(1.15) translate(-28 -20)"><g class="hat">'
-           f'<path d="{brim}" fill="url(#felt)"/><path d="{cone}" fill="url(#felt)"/>'
-           f'<path d="M20 17.6 Q28 19.8 36 17.6" fill="none" stroke="#3b2210" stroke-width="1.6" opacity=".7"/>'
-           f'<path d="{crease}" fill="none" stroke="#2a1608" stroke-width="1" stroke-linecap="round"/></g></g></g>')
-    defs = (f'<linearGradient id="term" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="{FUCHSIA}"/>'
-            f'<stop offset="1" stop-color="{ORANGE}"/></linearGradient>'
-            f'<linearGradient id="felt" x1="0" y1="1" x2=".6" y2="0"><stop offset="0" stop-color="#6b3f1d"/>'
-            f'<stop offset="1" stop-color="#c79358"/></linearGradient>')
-    css = (".cursor{animation:blink 1.1s steps(1) infinite}@keyframes blink{50%{opacity:0}}"
-           ".hat{transform-box:fill-box;transform-origin:50% 100%;animation:think 3.2s ease-in-out infinite alternate}"
-           "@keyframes think{from{transform:rotate(-4deg)}to{transform:rotate(3deg)}}")
-    return svg, defs, css, round(48 * k)
-
-
 def book_crest(h, dark):
     """An open spellbook from the library's *un*restricted section: a page keeps turning on its own
     and sparks rise from it. Returns (svg, defs, css, width)."""
@@ -422,7 +395,43 @@ def book_crest(h, dark):
     return svg, defs, css, round(48 * k)
 
 
-CRESTS = {"wand": wand_crest, "daynight": day_night_crest, "hat": hat_crest, "book": book_crest}
+HOUSE_INK = {"Gryffindor": ("#dc2626", "#f87171"), "Slytherin": ("#16a34a", "#4ade80"),
+             "Ravenclaw": ("#2563eb", "#60a5fa"), "Hufflepuff": ("#ca8a04", "#facc15")}
+HOUSES = (("Gryffindor", 20.5), ("Slytherin", 31), ("Ravenclaw", 29), ("Hufflepuff", 29.5))  # gem level: Gryffindor wins
+
+
+def points_crest(h, dark):
+    """The four house-points hourglasses of the Great Hall, gems trickling down: a scoreboard, so also a
+    tiny bar chart (guardrails are measured). Returns (svg, defs, css, width)."""
+    k = h / 42  # drawn on a 48x42 grid
+    glass_line = "#e9d5ff" if dark else "#7e22ce"
+    tubes, glass, caps, drops = [], [], [], []
+    for i, (house, level) in enumerate(HOUSES):
+        gem = HOUSE_INK[house][1]
+        cx = 6 + i * 12
+        l, r = cx - 4.5, cx + 4.5
+        shape = (f"M{l} 4 H{r} V11 Q{r} 15.5 {cx + 1} 17.5 Q{r} 19.5 {r} 24 V38 H{l} V24 "
+                 f"Q{l} 19.5 {cx - 1} 17.5 Q{l} 15.5 {l} 11 Z")
+        tubes.append(f'<clipPath id="tube{i}"><path d="{shape}"/></clipPath>')
+        glass.append(f'<path d="{shape}" fill="{"#ffffff" if dark else "#f5f3ff"}" fill-opacity="{.05 if dark else .6}"/>'
+                     f'<g clip-path="url(#tube{i})"><rect x="{l}" y="{level}" width="9" height="{38 - level}" fill="{gem}"/>'
+                     f'<rect x="{l}" y="8" width="9" height="5" fill="{gem}" opacity=".85"/>'
+                     f'<path d="M{l} {level + 3}h9M{l} {level + 7}h9" stroke="#fff" stroke-opacity=".25" stroke-width=".6" stroke-dasharray="1.2 1.6"/></g>'
+                     f'<path d="{shape}" fill="none" stroke="{glass_line}" stroke-width="1.1" stroke-opacity=".8"/>')
+        caps.append(f'<rect x="{l - 1}" y="2.4" width="11" height="2.2" rx="1" fill="url(#gold)"/>'
+                    f'<rect x="{l - 1}" y="37.6" width="11" height="2.2" rx="1" fill="url(#gold)"/>')
+        drops.append(f'<circle class="drop" style="animation-delay:{i * .35:.2f}s;--fall:{level - 18.5:.1f}px" cx="{cx}" cy="18.5" r=".9" fill="{gem}"/>')
+    svg = (f'<g transform="scale({k:.3f})">'
+           f'<g filter="url(#tight)" opacity="{.55 if dark else .2}">{"".join(glass)}</g>'
+           f'{"".join(glass)}{"".join(drops)}{"".join(caps)}</g>')
+    defs = ("".join(tubes) + '<linearGradient id="gold" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fde68a"/>'
+            '<stop offset="1" stop-color="#b45309"/></linearGradient>')
+    css = (".drop{animation:drop 1.4s ease-in infinite}"
+           "@keyframes drop{0%{transform:translateY(0);opacity:1}90%{opacity:1}100%{transform:translateY(var(--fall));opacity:0}}")
+    return svg, defs, css, round(48 * k)
+
+
+CRESTS = {"wand": wand_crest, "daynight": day_night_crest, "book": book_crest, "points": points_crest}
 
 
 def heading(title, tail, size, dark, icon="sparkle"):
@@ -918,15 +927,20 @@ NIGHT = [
     "Both shifts end with the same question. Not “does it work?”, but **“how do we know?”**",
 ]
 RULES_LEAD = "Clean and modular code from the very first incantation."
-RULES = [
-    "**Architecture that keeps the balance.** Clean Architecture, SOLID and MVI, with layer rules enforced by tests, "
-    "not by code-review mood.",
-    "**Testing potions for safe experiments.** Turbine for Flows, virtual time for coroutines, and fakes or mocks, "
-    "whichever fits the test.",
-    "**Modular by design.** Pure `commonMain`, platform code behind `expect`/`actual`, and convention plugins so many "
-    "modules build like one.",
-    "**Clarity above all.** Code is read far more often than it's written: by my team, by future me, and now by agents too.",
-    "**Agents earn their merges.** Spec → contracts → code → gates → PR. No receipt, no “tests pass”.",
+RULES_POINTS = "// …and the house points stand as follows:"
+RULES = [  # title, description, house, points: handed out like the end-of-term feast
+    ("Architecture that keeps the balance.",
+     "Clean Architecture, SOLID and MVI, with layer rules enforced by tests, not by code-review mood.", "Ravenclaw", 50),
+    ("Testing potions for safe experiments.",
+     "Turbine for Flows, virtual time for coroutines, and fakes or mocks, whichever fits the test.", "Slytherin", 50),
+    ("Modular by design.",
+     "Pure `commonMain`, platform code behind `expect`/`actual`, and convention plugins so many modules build like one.",
+     "Hufflepuff", 60),
+    ("Clarity above all.",
+     "Code is read far more often than it's written: by my team, by future me, and now by agents too.", "Ravenclaw", 10),
+    ("Agents earn their merges.",
+     "Spec → contracts → code → gates → PR. No receipt, no “tests pass”, however confident the agent sounds.",
+     "Gryffindor", 1000),
 ]
 
 
@@ -991,9 +1005,13 @@ def night_panel(jpg):
                       bar=False, card=False)
 
 
+def rules_points(house, pts):
+    return f"+{pts} {house.upper()}"
+
+
 def rules_panel():
-    """House guardrails: no card and no bar (the bar is the cards' accent), on the same left edge as the
-    rest of the body text, with sparkles as bullets."""
+    """House guardrails as the end-of-term feast: each rule wins points for a house, in that house's colour,
+    and the last one wins the cup. No card and no bar, on the same left edge as the rest of the body text."""
     w, left = 860, 6
     tx = left + 26
     max_w = w - tx - 8
@@ -1001,17 +1019,33 @@ def rules_panel():
     for line in wrap_rich(f"**{RULES_LEAD}**", "JBMono", BODY_PX, w - left - 8):
         y += BODY_LEAD
         out.append(line_svg(left, y, line))
-    y += 6
-    for rule in RULES:
-        y += 10
-        for i, line in enumerate(wrap_rich(rule, "JBMono", BODY_PX, max_w)):
+    y += BODY_LEAD - 4
+    out.append(f'<text class="cmt" x="{left}" y="{y}" xml:space="preserve">{xml(RULES_POINTS)}</text>')
+    y += 4
+    for title, desc, house, pts in RULES:
+        y += 14 + BODY_LEAD
+        out.append(f'<path class="bul" d="{sparkle(left + 7, y - 5, 6)}"/>')
+        out.append(line_svg(tx, y, wrap_rich(f"**{title}**", "JBMono", BODY_PX, max_w)[0]))
+        tag_x = tx + width("JBMono", title, BODY_PX) + 14
+        cls = f"pts h-{house.lower()}"
+        if pts >= 1000:
+            out.append(f'<text class="{cls}" x="{tag_x:.0f}" y="{y}" filter="url(#hglow)" opacity=".8">{rules_points(house, pts)}</text>')
+        out.append(f'<text class="{cls}" x="{tag_x:.0f}" y="{y}">{rules_points(house, pts)}</text>')
+        for line in wrap_rich(desc, "JBMono", BODY_PX, max_w):
             y += BODY_LEAD
-            if i == 0:
-                out.append(f'<path class="bul" d="{sparkle(left + 7, y - 5, 6)}"/>')
             out.append(line_svg(tx, y, line))
     h = y + 10
-    alt = " ".join([RULES_LEAD] + [strip_marks(r) for r in RULES])
-    return mono_panel(w, h, "".join(out), alt, alt, bar=False, card=False)
+    houses = "".join(f".h-{n.lower()}{{fill:{ink[0]}}}" for n, ink in HOUSE_INK.items())
+    houses_dark = "".join(f".h-{n.lower()}{{fill:{ink[1]}}}" for n, ink in HOUSE_INK.items())
+    defs = (f'<filter id="hglow" x="-20%" y="-80%" width="140%" height="260%"><feGaussianBlur stdDeviation="3"/></filter>'
+            f"<style>.pts{{font-size:11.5px;font-weight:700;letter-spacing:1.5px}}{houses}"
+            f"@media (prefers-color-scheme:dark){{{houses_dark}}}</style>")
+    alt = rules_plain()
+    return mono_panel(w, h, "".join(out), alt, alt, italic_text=RULES_POINTS, defs=defs, bar=False, card=False)
+
+
+def rules_plain():
+    return " ".join([RULES_LEAD, RULES_POINTS.lstrip("/ ")] + [f"{t} {strip_marks(d)} ({rules_points(hs, p)})" for t, d, hs, p in RULES])
 
 
 # ---------- the character sheet: Kotlin, highlighted like an IDE in the neon palette
