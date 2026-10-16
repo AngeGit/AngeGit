@@ -412,45 +412,59 @@ HOUSE_INK = {"Gryffindor": ("#dc2626", "#f87171"), "Slytherin": ("#16a34a", "#4a
              "Ravenclaw": ("#2563eb", "#60a5fa"), "Hufflepuff": ("#ca8a04", "#facc15")}
 
 
+HOUSES = (("Gryffindor", 20.5), ("Slytherin", 31), ("Ravenclaw", 29), ("Hufflepuff", 29.5))  # gem level: Gryffindor wins
+
+
+def mix(c1, c2, t):
+    """Blend two #rrggbb colours: t=0 gives c1, t=1 gives c2."""
+    a, b = (int(c1[i:i + 2], 16) for i in (1, 3, 5)), (int(c2[i:i + 2], 16) for i in (1, 3, 5))
+    return "#" + "".join(f"{round(x + (y - x) * t):02x}" for x, y in zip(a, b))
+
+
 def points_crest(h, dark):
-    """A house-points hourglass, Gryffindor's after that +1000: wooden frame like the wand, glass bulbs,
-    faceted rubies heaped under a trickle, and the wand's spark on the frame. Returns (svg, defs, css, width)."""
+    """The four house-points hourglasses of the Great Hall: faceted gems heaped under a trickle, glass with
+    a glint, gold caps with finials and a twinkle on the pile. Gryffindor leads. A scoreboard, so also a
+    tiny bar chart (guardrails are measured). Returns (svg, defs, css, width)."""
     k = h / 42  # drawn on a 48x42 grid
-    glass = ("M13.5 6.5 H30.5 V9 C30.5 15 24 17 23.2 21 C24 25 30.5 27 30.5 33 V35.5 H13.5 V33 "
-             "C13.5 27 20 25 20.8 21 C20 17 13.5 15 13.5 9 Z")
-    top_sand = "M12 12.5 Q22 16 32 12.5 V24 H12 Z"
-    pile = "M12 37 V31 Q22 22.5 32 31 V37 Z"
+    glass_line = "#e9d5ff" if dark else "#7e22ce"
+    defs, glow, front = [], [], []
+    defs.append('<pattern id="facets" width="3" height="3" patternUnits="userSpaceOnUse">'
+                '<path d="M1.5 0L3 1.5L1.5 3L0 1.5Z" fill="#fff" fill-opacity=".22"/></pattern>'
+                '<linearGradient id="gold" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fef3c7"/>'
+                '<stop offset=".5" stop-color="#f59e0b"/><stop offset="1" stop-color="#92400e"/></linearGradient>')
+    for i, (house, level) in enumerate(HOUSES):
+        gem = HOUSE_INK[house][1]
+        cx = 6 + i * 12
+        l, r = cx - 4.5, cx + 4.5
+        shape = (f"M{l} 4.5 H{r} V11 Q{r} 15.5 {cx + 1} 17.5 Q{r} 19.5 {r} 24 V37.5 H{l} V24 "
+                 f"Q{l} 19.5 {cx - 1} 17.5 Q{l} 15.5 {l} 11 Z")
+        pile = f"M{l} {level + 2} Q{cx} {level - 3} {r} {level + 2} V38 H{l} Z"
+        reserve = f"M{l} 6 H{r} V10 Q{cx} 15 {l} 10 Z"
+        defs.append(f'<clipPath id="tube{i}"><path d="{shape}"/></clipPath>'
+                    f'<linearGradient id="gem{i}" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="{mix(gem, "#ffffff", .45)}"/>'
+                    f'<stop offset=".45" stop-color="{gem}"/><stop offset="1" stop-color="{mix(gem, "#000000", .45)}"/></linearGradient>')
+        body = (f'<path d="{shape}" fill="{"#ffffff" if dark else "#f5f3ff"}" fill-opacity="{.06 if dark else .6}"/>'
+                f'<g clip-path="url(#tube{i})">'
+                f'<path d="{reserve}" fill="url(#gem{i})"/><path d="{reserve}" fill="url(#facets)"/>'
+                f'<path d="M{cx} 15V{level}" stroke="{gem}" stroke-width=".7" opacity=".85"/>'
+                f'<path d="{pile}" fill="url(#gem{i})"/><path d="{pile}" fill="url(#facets)"/></g>')
+        glow.append(f'<path d="{pile}" fill="{gem}" clip-path="url(#tube{i})"/>')
+        front.append(body +
+                     f'<path d="{shape}" fill="none" stroke="{glass_line}" stroke-width="1" stroke-opacity=".75"/>'
+                     f'<path d="M{l + 1.4} 6.5V10.5M{l + 1.4} 25V35.5" stroke="#fff" stroke-opacity=".45" stroke-width=".8" stroke-linecap="round"/>'
+                     f'<circle class="drop" style="animation-delay:{i * .35:.2f}s;--fall:{level - 17:.1f}px" cx="{cx}" cy="16.5" r=".9" fill="{mix(gem, "#ffffff", .4)}"/>'
+                     f'<path class="twinkle" style="animation-delay:{i * .6:.1f}s" d="{sparkle(cx + 1.6, level + 4.5, 1.6)}" fill="#fff"/>'
+                     f'<rect x="{l - 1.2}" y="2.2" width="11.4" height="2.6" rx="1.2" fill="url(#gold)"/>'
+                     f'<circle cx="{cx}" cy="1.4" r="1.2" fill="url(#gold)"/>'
+                     f'<rect x="{l - 1.2}" y="37.2" width="11.4" height="2.8" rx="1.2" fill="url(#gold)"/>'
+                     f'<rect x="{l + .5}" y="39.8" width="8" height="1.4" rx=".6" fill="url(#gold)" opacity=".8"/>')
     svg = (f'<g transform="scale({k:.3f})">'
-           f'<path d="{glass}" fill="#ffffff" fill-opacity="{.08 if dark else .5}"/>'
-           f'<g clip-path="url(#glass)">'
-           f'<path d="{top_sand}" fill="url(#ruby)"/><path d="{top_sand}" fill="url(#facets)"/>'
-           f'<path d="M22 21V29" stroke="#ef4444" stroke-width=".9"/>'
-           f'<path d="{pile}" fill="url(#ruby)"/><path d="{pile}" fill="url(#facets)"/></g>'
-           f'<circle class="drop" cx="22" cy="21.5" r="1" fill="#fecaca"/>'
-           f'<path d="{glass}" fill="none" stroke="#f5f3ff" stroke-opacity=".7" stroke-width=".9"/>'
-           f'<path d="M15.3 9.5 C15.5 12.5 17 14.5 19 16.5 M15.3 34 V30.5" fill="none" stroke="#fff" stroke-opacity=".5" stroke-width=".8" stroke-linecap="round"/>'
-           f'<path class="twinkle" d="{sparkle(25, 30.5, 1.8)}" fill="#fff"/>'
-           f'<rect x="9.4" y="5" width="2.6" height="32" rx="1.3" fill="url(#wood2)"/>'
-           f'<rect x="32" y="5" width="2.6" height="32" rx="1.3" fill="url(#wood2)"/>'
-           f'<rect x="7" y="2.5" width="30" height="4" rx="2" fill="url(#wood)"/>'
-           f'<rect x="7" y="35.5" width="30" height="4" rx="2" fill="url(#wood)"/>'
-           f'<path d="M8.5 3.4 H35.5 M8.5 36.4 H35.5" stroke="#f3d9b1" stroke-opacity=".45" stroke-width=".7" stroke-linecap="round"/>'
-           f'{magic_tip(37.5, 4.5)}</g>')
-    defs = (f'<clipPath id="glass"><path d="{glass}"/></clipPath>'
-            '<linearGradient id="ruby" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fecaca"/>'
-            '<stop offset=".4" stop-color="#ef4444"/><stop offset="1" stop-color="#7f1d1d"/></linearGradient>'
-            '<pattern id="facets" width="3" height="3" patternUnits="userSpaceOnUse">'
-            '<path d="M1.5 0L3 1.5L1.5 3L0 1.5Z" fill="#fff" fill-opacity=".25"/></pattern>'
-            '<linearGradient id="wood" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#d9b07a"/>'
-            '<stop offset="1" stop-color="#6b3f1d"/></linearGradient>'
-            '<linearGradient id="wood2" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#d9b07a"/>'
-            '<stop offset="1" stop-color="#6b3f1d"/></linearGradient>')
-    css = (".drop{animation:drop 1.1s ease-in infinite}"
-           "@keyframes drop{0%{transform:translateY(0);opacity:1}90%{opacity:1}100%{transform:translateY(7px);opacity:0}}"
+           f'<g filter="url(#tight)" opacity="{.7 if dark else .25}">{"".join(glow)}</g>{"".join(front)}</g>')
+    css = (".drop{animation:drop 1.4s ease-in infinite}"
+           "@keyframes drop{0%{transform:translateY(0);opacity:1}90%{opacity:1}100%{transform:translateY(var(--fall));opacity:0}}"
            ".twinkle{transform-box:fill-box;transform-origin:center;opacity:0;animation:twinkle 2.4s ease-in-out infinite}"
-           "@keyframes twinkle{0%,60%,100%{opacity:0;transform:scale(.3)}75%{opacity:1;transform:scale(1)}}"
-           + TIP_CSS)
-    return svg, defs, css, round(48 * k)
+           "@keyframes twinkle{0%,60%,100%{opacity:0;transform:scale(.3)}75%{opacity:1;transform:scale(1)}}")
+    return svg, "".join(defs), css, round(48 * k)
 
 
 CRESTS = {"wand": wand_crest, "daynight": day_night_crest, "lock": lock_crest, "points": points_crest}
@@ -1068,7 +1082,7 @@ def rules_plain():
 ANGIE_KT = """@OptIn(ExperimentalMagicApi::class)
 object Angie : Technomancer {
     override val wand = Kotlin
-    override val spareWand = Java
+    override val spareWands = listOf(Java, Kotlin)
     override val wandCores = mapOf(
         "UI" to listOf("Jetpack Compose", "XML views", "Material 3"),
         "Multiplatform" to listOf("Kotlin Multiplatform", "Compose Multiplatform"),
