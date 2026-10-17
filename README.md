@@ -38,17 +38,17 @@
 <picture><source media="(max-width: 600px)" srcset="assets/night-shift-m.svg"><img src="assets/night-shift.svg" width="100%" alt="“With great power comes great responsibility.” — Uncle Ben, clearly talking about AI coding agents Two shifts, one obsession: Kotlin that ships, and agents that can prove what they did. The day shift taught me that production is the only reviewer that never sleeps. It forgives nothing, so I test the boring paths, measure before I optimise and leave the code a little cleaner than I found it. The night shift is where I bring that discipline to AI. Agents write code while I sleep and open pull requests on my home server; the harness checks them before I do, whether they come from Claude Code, Codex CLI or Copilot, and I benchmark local models like Qwen and Gemma against the same gates. Both shifts end with the same question. Not “does it work?”, but “how do we know?”"></picture>
 
 <p align="center">
-  <a href="https://www.linkedin.com/in/angelesmartin-androiddev/"><img src="assets/card-day-job.svg" width="49%" alt="Day shift at ALTEN: feature lead on a retail app used by millions; new shopping cart, GA4 analytics and my AI-agent harness brought into the team"></a>
-  <a href="mailto:angelesmafon@gmail.com?subject=Sneak%20peek%3A%20ArIAdna"><img src="assets/card-ariadna.svg" width="49%" alt="ArIAdna (work in progress): a Compose Multiplatform app I&#x27;m building to turn live Claude Code sessions into UI. Ask for a sneak peek"></a>
-  <a href="mailto:angelesmafon@gmail.com?subject=Walkthrough%3A%20agent%20harness"><img src="assets/card-harness.svg" width="49%" alt="Agent harness (work in progress), day and night: 50+ typed skills, deterministic quality gates and LLM-as-judge evals, audited on 8,466 real agent turns. Open source when it&#x27;s ready"></a>
-  <img src="assets/card-lifelog.svg" width="49%" alt="lifelog: a personal life log in KMP and Android with cheap capture and deferred interpretation">
+  <a href="https://www.linkedin.com/in/angelesmartin-androiddev/"><img src="assets/card-day-job.svg" alt="Day shift at ALTEN: feature lead on a retail app used by millions; new shopping cart, GA4 analytics and my AI-agent harness brought into the team"></a>
+  <a href="mailto:angelesmafon@gmail.com?subject=Sneak%20peek%3A%20ArIAdna"><img src="assets/card-ariadna.svg" alt="ArIAdna (work in progress): a Compose Multiplatform app I&#x27;m building to turn live Claude Code sessions into UI. Ask for a sneak peek"></a>
+  <a href="mailto:angelesmafon@gmail.com?subject=Walkthrough%3A%20agent%20harness"><img src="assets/card-harness.svg" alt="Agent harness (work in progress), day and night: 50+ typed skills, deterministic quality gates and LLM-as-judge evals, audited on 8,466 real agent turns. Open source when it&#x27;s ready"></a>
+  <img src="assets/card-lifelog.svg" alt="lifelog: a personal life log in KMP and Android with cheap capture and deferred interpretation">
 </p>
 
 <h3><picture><source media="(prefers-color-scheme: dark)" srcset="assets/h-unrestricted-dark.svg"><img src="assets/h-unrestricted-light.svg" height="36" alt="Unrestricted section · public repos"></picture></h3>
 
 <p align="center">
-  <a href="https://github.com/AngeGit/RickMortyKMMApp"><img src="assets/card-rickmorty.svg" width="49%" alt="Rick &amp; Morty KMP: shared Compose Multiplatform UI for Android and iOS"></a>
-  <a href="https://github.com/AngeGit/Chirp-API"><img src="assets/card-chirp.svg" width="49%" alt="Chirp API: modular Kotlin and Spring Boot backend wired with Gradle convention plugins"></a>
+  <a href="https://github.com/AngeGit/RickMortyKMMApp"><img src="assets/card-rickmorty.svg" alt="Rick &amp; Morty KMP: shared Compose Multiplatform UI for Android and iOS"></a>
+  <a href="https://github.com/AngeGit/Chirp-API"><img src="assets/card-chirp.svg" alt="Chirp API: modular Kotlin and Spring Boot backend wired with Gradle convention plugins"></a>
 </p>
 
 <h3><picture><source media="(prefers-color-scheme: dark)" srcset="assets/h-house-rules-dark.svg"><img src="assets/h-house-rules-light.svg" height="36" alt="House guardrails · how I work"></picture></h3>

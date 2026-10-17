@@ -541,14 +541,16 @@ CARD_FILES = {  # file stem: file open in the editor tab, language in the status
     "rickmorty": ("RickAndMorty.kt", "Kotlin", False),
     "chirp": ("ChirpApi.kt", "Kotlin", False),
 }
-CARD_DESC_PX, CARD_LEAD = 12, 19
+CARD_DESC_PX, CARD_LEAD = 12.5, 20
 
 
 def card(stem, tag, title, desc, foot):
     """A project as a file open in the editor: window dots, a tab with the file, the tag as a comment,
     the title as a heading, the description, and the footer in the status bar.
-    Always dark, like Angie.kt. Every card gets the height of the longest description so the grid lines up."""
-    w, m = 440, 8
+    Always dark, like Angie.kt. Every card gets the height of the longest description so the grid lines up.
+    400 wide and placed without a width in the README: two fit per row in GitHub's ~830 px column, and on
+    narrower screens they wrap one under another by themselves."""
+    w, m = 400, 8
     fname, lang, private = CARD_FILES[stem]
     max_w = w - 2 * m - 60
     most = max(len(wrap(c[2], "JBMono", CARD_DESC_PX, max_w)) for c in CARDS.values())
@@ -723,7 +725,8 @@ def line_svg(x, y, line, cls="p"):
 
 def letter(envelope_jpg, burst_jpg, w=860):
     """The Howler opens: the envelope shakes, bursts into sparks over the burst scene, the shout slams in
-    and the letter reveals line by line. Everything stays afterwards, so the letter can be reread.
+    and the letter reveals line by line while the card lengthens to hold it (SMIL on the card's height: an image
+    can't change its size in the page, so the space below stays reserved). Everything stays afterwards.
     Narrow (phone) letters split long shouts in two lines instead of shrinking them."""
     narrow = w < 600
     pad, body_px, lead = (18 if narrow else 48), BODY_PX, BODY_LEAD + 1
@@ -757,6 +760,9 @@ def letter(envelope_jpg, burst_jpg, w=860):
     t_text = t + .1
 
     parts = []
+    grow = []  # (time, card height): the card lengthens as the letter is revealed, line by line
+    extra = max([(len(lines) - 1) * px * 1.15 for lines, px in zip(shout_lines, shout_px)] + [(len(hello_lines) - 1) * 22])
+    grow += [(0, slot_y + extra + 22), (t_text, slot_y + extra + 22)]
     for j, line in enumerate(hello_lines):
         parts.append(f'<text class="hello rev" style="animation-delay:{t_text:.2f}s" x="{pad}" y="{slot_y + j * 22}">{xml(line)}</text>')
     y = slot_y + (len(hello_lines) - 1) * 22
@@ -768,9 +774,11 @@ def letter(envelope_jpg, burst_jpg, w=860):
             y += lead
             delay += .05
             parts.append(line_svg(pad, y, line).replace('<text class="p"', f'<text class="p rev" style="animation-delay:{delay:.2f}s"', 1))
+            grow.append((delay, y + 16))
     y += 40
     delay += .2
     parts.append(f'<text class="sign rev" style="animation-delay:{delay:.2f}s" x="{w - pad}" y="{y}" text-anchor="end">{xml(STORY_SIGN)}</text>')
+    grow.append((delay, y + 16))
     y += 36
     end_lines = wrap(STORY_END, "JBMono", 12.5, max_w - 20)
     parts.append(f'<g class="rev" style="animation-delay:{delay + .2:.2f}s"><path class="spark" d="{sparkle(pad + 6, y - 5, 6)}"/>'
@@ -778,6 +786,15 @@ def letter(envelope_jpg, burst_jpg, w=860):
                  + '</g>')
     y += (len(end_lines) - 1) * 18
     h = y + max(pad, 30) - 8
+    grow.append((delay + .6, h - 8))
+    total = grow[-1][0]
+    times, heights = [], []
+    for t, height in grow:  # keyTimes must not go backwards
+        t = max(t, times[-1] + .001) if times else t
+        times.append(t)
+        heights.append(min(height, h - 8))
+    grow_svg = (f'<animate attributeName="height" dur="{total:.2f}s" fill="freeze" calcMode="linear" '
+                f'values="{";".join(f"{v:.0f}" for v in heights)}" keyTimes="{";".join(f"{t / total:.4f}" for t in times)}"/>')
 
     rnd = random.Random(9)
     sparks = []
@@ -838,7 +855,7 @@ def letter(envelope_jpg, burst_jpg, w=860):
 
 .end{{font:500 12.5px 'JBMono',monospace}}{motion}
 {theme}{REDUCED}</style>
-<rect class="bg" x="4" y="4" width="{band_w}" height="{h - 8}" rx="20"/>
+<rect class="bg" x="4" y="4" width="{band_w}" height="{h - 8}" rx="20">{grow_svg}</rect>
 <g clip-path="url(#card)">
  <image class="burst" href="{jpg(burst_jpg)}" x="4" y="4" width="{band_w}" height="{band_h}" preserveAspectRatio="xMidYMid slice"/>
  <image class="env" href="{jpg(envelope_jpg)}" x="4" y="4" width="{band_w}" height="{band_h}" preserveAspectRatio="xMidYMid slice"/>
@@ -846,8 +863,8 @@ def letter(envelope_jpg, burst_jpg, w=860):
  {"".join(sparks)}
  <rect x="4" y="4" width="{band_w}" height="{band_h + 2}" fill="url(#fade)"/>
 </g>
-<rect class="halo" x="4" y="4" width="{band_w}" height="{h - 8}" rx="20" fill="none" stroke="url(#g)" stroke-width="3" filter="url(#glow)"/>
-<rect x="4" y="4" width="{band_w}" height="{h - 8}" rx="20" fill="none" stroke="url(#g)" stroke-width="1.5"/>
+<rect class="halo" x="4" y="4" width="{band_w}" height="{h - 8}" rx="20" fill="none" stroke="url(#g)" stroke-width="3" filter="url(#glow)">{grow_svg}</rect>
+<rect x="4" y="4" width="{band_w}" height="{h - 8}" rx="20" fill="none" stroke="url(#g)" stroke-width="1.5">{grow_svg}</rect>
 {shout}
 {"".join(parts)}
 </svg>"""
