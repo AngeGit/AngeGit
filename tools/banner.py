@@ -1273,14 +1273,14 @@ def button(emoji, label, sub, c1, c2):
 def howler():
     """The summary of the <details> that holds the long story: a red envelope that shakes now and then,
     no box around it, and the words in a red-to-orange gradient."""
-    label, sub = "OPEN THE HOWLER", "my story · read it, or hear it in my voice"
+    label, sub = "OPEN THE HOWLER", "the rest of my story"
     title_px, sub_px, h = 20, 12, 104
     tx = 118
     text_w = max(width("Oxanium", label, title_px, 2) * 1.04, len(sub) * MONO_CW * sub_px)
     w = round(tx + text_w + 14)
     theme = (".r1{stop-color:#dc2626}.r2{stop-color:#ea580c}.tglow{display:none}"
              "@media (prefers-color-scheme:dark){.r1{stop-color:#ef4444}.r2{stop-color:#fb923c}.tglow{display:inline}}")
-    return f"""{svg_open(w, h, "Open the Howler: my story, read it or hear it in my voice")}
+    return f"""{svg_open(w, h, "Open the Howler: the rest of my story")}
 <defs>
  <linearGradient id="ink" gradientUnits="userSpaceOnUse" x1="{tx}" y1="0" x2="{tx + text_w:.0f}" y2="0"><stop class="r1" offset="0"/><stop class="r2" offset="1"/></linearGradient>
  <linearGradient id="paper" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ef4444"/><stop offset="1" stop-color="#991b1b"/></linearGradient>

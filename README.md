@@ -20,12 +20,8 @@
 <div align="center">
 <details>
 <!-- The <a name> without href keeps GitHub from wrapping the image in a link, so a click opens the Howler. -->
-<summary><a name="howler"><img align="middle" src="assets/btn-howler.svg" height="104" alt="Open the Howler: my story, read it or hear it in my voice"></a></summary>
+<summary><a name="howler"><img align="middle" src="assets/btn-howler.svg" height="104" alt="Open the Howler: the rest of my story"></a></summary>
 <br>
-
-<!-- 🎙️ The polite Howler as a voice note (tools/howler_voicenote.py): a bare user-attachments URL on its own line becomes a player. -->
-
-https://github.com/user-attachments/assets/fad714f5-34bc-485c-9914-347621c852b7
 
 <picture><source media="(max-width: 600px)" srcset="assets/howler-letter-m.svg"><img src="assets/howler-letter.svg" width="100%" alt="YOU! HOW DARE YOU MERGE AN AI PR WITHOUT READING IT?! “ALL TESTS PASS”? WHERE. IS. THE. EVIDENCE?! MOCKS IN MY TEST SUITE! RUNBLOCKING IN A FLOW TEST! I AM ABSOLUTELY… DISGUSTED! …sorry. I promised you a polite Howler. Let me start again: hi, I&#x27;m Angie. I started in 2018, studying multiplatform app development. In 2020 I shipped my first Android code as an intern, and over the next two years I built an Android app from scratch: architecture, networking, persistence and release. That&#x27;s where I learned to like things done properly. Since 2023 I&#x27;ve been at ALTEN, on an international fashion retail app used by millions. I rewrite legacy features as new code, from the shopping cart to promotions, gift wrapping and gift cards, and I migrated the analytics from GA3 to GA4. I designed the tool QA now uses to follow the consent flow and reconcile events from six analytics SDKs (agents wrote the Python), and built most of our team&#x27;s AI-agent harness. These days I&#x27;m also on app health: R8, dead code, memory leaks and keeping CI green. Claude Code is my daily wand, and at home I&#x27;m building a harness around it: typed skills, quality gates and evals. I&#x27;m also building ArIAdna, a Compose Multiplatform app that shows what an agent is really doing. Fittingly, it&#x27;s being built by one: an unattended agent on my home server opens the pull requests, and I review every one and own every decision. What I&#x27;m looking for: a remote team (I&#x27;m in Madrid) building Android or KMP products, or developer tooling, where AI is part of the craft rather than a buzzword. If that&#x27;s you, send an owl. — Angie"></picture>
 
