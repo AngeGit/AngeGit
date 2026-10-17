@@ -501,13 +501,13 @@ def heading(title, tail, size, dark, icon="sparkle"):
 
 CARDS = {  # file stem: tag, title, description, footer
     "day-job": ("DAY SHIFT · ALTEN", "Shopping at scale",
-                "Feature lead on a retail app used by millions: shipped the new shopping cart, moved analytics to GA4 and brought my AI-agent harness into the team.",
+                "Android dev on a retail app used by millions: I rewrite legacy features one by one, migrated analytics to GA4 and built our AI-agent harness, one-click analytics builds and QA's event dashboard.",
                 "CLIENT WORK · KOTLIN · COMPOSE"),
     "ariadna": ("NIGHT SHIFT · KMP + CMP · WIP", "ArIAdna",
                 "A thread through the agent's labyrinth: a Compose Multiplatform app I'm building to turn live Claude Code sessions into UI, from sub-agents to refusals.",
                 "WIP · ASK FOR A SNEAK PEEK →"),
     "harness": ("DAY & NIGHT · AGENT HARNESS · WIP", "Agent harness",
-                "50+ typed skills, deterministic quality gates and LLM-as-judge evals. Audited on 8,466 real agent turns: caught 3 gates faking green.",
+                "50+ typed skills, deterministic quality gates and LLM-as-judge evals. Born at home, now part of my team's project at work.",
                 "WIP · OPEN SOURCE WHEN IT'S READY →"),
     "lifelog": ("NIGHT SHIFT · KMP + ANDROID", "lifelog",
                 "My Pensieve: a personal life log with cheap capture and deferred interpretation. Write it down now, make sense of it later.",
@@ -657,14 +657,14 @@ STORY = [
     "I started in **2018**, studying multiplatform app development. In 2020 I shipped my first Android code as an intern, "
     "and over the next two years I built an Android app **from scratch**: architecture, networking, persistence and release. "
     "That's where I learned to like things done properly.",
-    "Since 2023 I've been at ALTEN, on an international fashion retail app **used by millions**. I took over the new "
-    "shopping cart mid-rewrite and got it **to production**, moved the analytics from GA3 to GA4, and built the Python tool "
-    "QA now uses to reconcile events from six analytics SDKs, and brought my AI-agent harness into the team's workflow. "
-    "These days I'm on app health: R8 across the app and a high-precision hunt for dead code.",
-    "Claude Code is my daily wand, at work and at home, and I'm building a harness around it. "
-    "When I audited it on **8,466 real agent turns**, I caught "
-    "three gates reporting green without evidence. Since then I ask every AI feature the same question: **what's the evidence?**",
-    "That's why I'm building **ArIAdna**, a Compose Multiplatform app that shows what an agent is really doing. Fittingly, it's "
+    "Since 2023 I've been at ALTEN, on an international fashion retail app **used by millions**. I rewrite legacy "
+    "features as new code, from the **shopping cart** to promotions, gift wrapping and gift cards, and I migrated the "
+    "analytics from GA3 to GA4. I designed the tool "
+    "QA now uses to follow the consent flow and reconcile events from six analytics SDKs (agents wrote the Python), and "
+    "built most of our team's AI-agent harness. "
+    "These days I'm also on app health: R8, dead code, memory leaks and keeping CI green.",
+    "Claude Code is my daily wand, and at home I'm building a harness around it: typed skills, quality gates and evals.",
+    "I'm also building **ArIAdna**, a Compose Multiplatform app that shows what an agent is really doing. Fittingly, it's "
     "being built by one: an unattended agent on my home server opens the pull requests, and I review every one and own every decision.",
     "What I'm looking for: a **remote team** (I'm in Madrid) building Android or KMP products, or developer tooling, where AI "
     "is part of the craft rather than a buzzword. If that's you, send an owl.",
@@ -911,9 +911,9 @@ QUOTE_AUTHOR = ("Not quite Dumbledore, but definitely", "his vibe in the Jetpack
 INTRO = [  # paragraphs, all in one style; **highlights** only for a few key words
     "Welcome to my **(code)** chamber of secrets. I'm Ángeles, Angie for short: an Android and Kotlin Multiplatform "
     "developer based in Madrid, with 5+ years of shipping real apps. By day I build with **Kotlin** and **Compose** "
-    "on an app used by millions of shoppers, where a bug in the checkout is never a small bug.",
-    "Day and night, I also build the wards that keep **AI coding agents** honest: specs they must follow, gates they "
-    "can't charm their way past, and evidence behind every “tests pass”, at work and at home. I wrote you a Howler "
+    "on an app used by millions of shoppers, where no checkout bug is ever small.",
+    "I also build tooling that keeps **AI coding agents** honest, at work and at home: specs to follow and quality "
+    "gates they can't skip. I wrote you a Howler "
     "with the rest of the story, just below. "
     "Don't worry: it's a polite one. Almost.",
 ]
@@ -985,13 +985,12 @@ text{{font-family:'JBMono',monospace;font-variant-ligatures:none}}.p{{font-size:
 NIGHT_COMMENT = "“With great power comes great responsibility.” — Uncle Ben, clearly talking about AI coding agents"
 NIGHT = [
     "Two shifts, one obsession: **Kotlin that ships**, and **agents that can prove what they did**.",
-    "The day shift taught me that production is the only reviewer that never sleeps. It "
-    "forgives nothing, so I test the boring paths, measure before I optimise and leave the code a little cleaner "
-    "than I found it.",
-    "The night shift is where I bring that discipline to AI. Agents write code while I sleep and open pull requests "
-    "on my home server; the harness checks them before I do, whether they come from Claude Code, Codex CLI or "
-    "Copilot, and I benchmark local models like Qwen and Gemma against the same gates.",
-    "Both shifts end with the same question. Not “does it work?”, but **“how do we know?”**",
+    "By day, I automate whatever I do twice: the agent harness my team runs on Copilot and OpenCode, a one-click "
+    "analytics build that drafts the client's changelog, and Claude Code panels for tickets, PRs and reviews. "
+    "Even my spinner is on brand: “The Cybermen want to upgrade you to Compose.”",
+    "By night, agents write code while I sleep and open pull requests on my home server. The harness checks them "
+    "before I do, whether they come from Claude Code, OpenCode or Copilot, and I benchmark local models like Qwen and "
+    "Gemma against the same gates. I even wrote a proxy so Claude Code can work with other model providers.",
 ]
 RULES_LEAD = "Clean and modular code from the very first incantation."
 RULES_POINTS = "// …and the house points stand as follows:"
@@ -1147,7 +1146,7 @@ object Angie : Technomancer {
         "Build" to listOf("Gradle", "convention plugins", "version catalogs", "R8"),
         "Analytics" to listOf("Firebase", "GA4"),
         "Tools" to listOf("Android Studio", "Git", "GitHub Actions", "Figma", "Postman"),
-        "AI agents" to listOf("Claude Code", "Codex CLI", "GitHub Copilot", "local LLMs"),
+        "AI agents" to listOf("Claude Code", "OpenCode", "GitHub Copilot", "local LLMs"),
         "Harness" to listOf("MCP servers", "agent skills", "quality gates", "LLM-as-judge evals"),
     )
     override val house: House = TODO("The Sorting Hat is still thinking")
