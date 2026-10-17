@@ -1,8 +1,8 @@
 """The spinning Earth next to the Hello, World heading, drawn from scratch so nothing borrowed ends up in
 the repo (it replaces a hotlinked GIF with no licence).
 
-A hand-traced, simplified world map (lon/lat polygons, satellite colours) is projected onto a tilted sphere
-with side light and a darker limb, one frame every 6 degrees, saved as an animated PNG: soft edges on light
+A hand-traced, simplified world map (lon/lat polygons, satellite colours, hillshaded relief with the big
+mountain ranges) is projected onto a tilted sphere with side light, a darker limb and a sun glint on the sea, one frame every 6 degrees, saved as an animated PNG: soft edges on light
 and dark pages alike, which a GIF can't do. Seeded throughout, so the output is reproducible.
 
 usage (from the repo root): python3 tools/globe.py assets/globe.png [size_px=44] [frames=60]
@@ -10,7 +10,7 @@ needs: pip install pillow
 """
 import math, random, sys
 
-from PIL import Image, ImageDraw, ImageFilter
+from PIL import Image, ImageChops, ImageDraw, ImageFilter
 
 # ---------- the map: (lon, lat) polygons, traced by hand and simplified
 LAND = {
@@ -97,6 +97,27 @@ FOREST = {
     "se_asia": [(98, 20), (108, 20), (108, 10), (100, 5), (97, 12)],
 }
 ICE = {"greenland": LAND["greenland"], "antarctica": LAND["antarctica"], "arctic": LAND["arctic_islands"]}
+RIDGES = {  # mountain ranges as (lon, lat) polylines: points, width in degrees, height 0-255
+    "rockies": ([(-150, 62), (-138, 60), (-128, 56), (-120, 50), (-114, 44), (-110, 40), (-107, 35), (-105, 30), (-103, 24),
+                 (-99, 19)], 5, 220),
+    "andes": ([(-76, 9), (-77, 3), (-78, -2), (-77, -8), (-73, -14), (-69, -18), (-68, -24), (-69, -30), (-70, -36), (-71, -42),
+               (-72, -48), (-73, -52)], 4, 255),
+    "himalaya": ([(68, 37), (74, 36), (80, 32), (86, 28), (92, 28), (97, 28)], 4, 255),
+    "tibet": ([(80, 34), (90, 33), (97, 32)], 9, 200),
+    "altai_tianshan": ([(70, 41), (78, 42), (86, 44), (92, 47), (100, 49)], 3.5, 180),
+    "alps": ([(5, 44), (8, 46), (12, 47), (15, 47)], 2.5, 200),
+    "atlas": ([(-9, 31), (-4, 33), (2, 35), (8, 36)], 2.5, 160),
+    "caucasus_zagros": ([(40, 43), (46, 41), (48, 36), (52, 31), (57, 28)], 3, 170),
+    "urals": ([(59, 50), (59, 56), (60, 62), (64, 67)], 2.5, 140),
+    "scandinavia": ([(6, 59), (9, 62), (14, 66), (19, 69)], 3, 150),
+    "east_africa": ([(39, 14), (38, 8), (37, 1), (36, -6), (33, -12), (30, -20)], 4, 170),
+    "drakensberg": ([(26, -24), (29, -28), (28, -32)], 2.5, 120),
+    "appalachians": ([(-86, 33), (-81, 37), (-77, 40), (-72, 44), (-68, 47)], 3, 130),
+    "brazilian_highlands": ([(-50, -12), (-45, -18), (-44, -22)], 6, 90),
+    "great_dividing": ([(145, -14), (147, -20), (150, -27), (151, -33), (147, -38)], 2.5, 130),
+    "east_siberia": ([(130, 62), (140, 65), (155, 63), (160, 58)], 4, 120),
+    "greenland_dome": ([(-45, 63), (-42, 72), (-40, 80)], 10, 140),
+}
 
 OCEAN, OCEAN_DEEP = (58, 104, 136), (30, 62, 94)  # steel blue, like satellite imagery
 LAND_C, DESERT_C, FOREST_C, ICE_C = (132, 128, 88), (204, 182, 136), (82, 106, 60), (236, 238, 236)
@@ -116,6 +137,25 @@ def polys(layer):
     for poly in layer.values():
         for shift in (-360, 0, 360):
             yield [to_tex(lon, lat, shift) for lon, lat in poly]
+
+
+def heightmap(W):
+    """Fractal relief (seeded value noise, four octaves) plus the big mountain ranges, on the padded canvas."""
+    rnd = random.Random(11)
+    noise = Image.new("L", (TW, TH), 128)
+    for cells, weight in ((12, .5), (24, .4), (48, .3), (96, .15)):
+        small = Image.frombytes("L", (cells, cells // 2), rnd.randbytes(cells * cells // 2))
+        noise = Image.blend(noise, small.resize((TW, TH), Image.BICUBIC), weight)
+    relief = Image.new("L", (W, TH))
+    for shift in (-TW, 0, TW):
+        relief.paste(noise, (PAD + shift, 0))
+    ridges = Image.new("L", (W, TH), 0)
+    rd = ImageDraw.Draw(ridges)
+    for pts, width_deg, height in RIDGES.values():
+        for shift in (-360, 0, 360):
+            rd.line([to_tex(lon, lat, shift) for lon, lat in pts], fill=height, width=round(width_deg * TW / 360), joint="curve")
+    ridges = ridges.filter(ImageFilter.GaussianBlur(14))
+    return ImageChops.add(Image.eval(relief, lambda v: v // 2), ridges).filter(ImageFilter.GaussianBlur(3))
 
 
 def texture():
@@ -140,6 +180,9 @@ def texture():
     land = land.filter(ImageFilter.GaussianBlur(6))  # biomes blend into each other
     noise = Image.frombytes("L", (W, TH), random.Random(5).randbytes(W * TH)).filter(ImageFilter.GaussianBlur(1.2))  # terrain grain
     land = Image.composite(land, Image.blend(land, Image.merge("RGB", [noise] * 3), .18), Image.new("L", (W, TH), 220))
+    # chiaroscuro: hillshade lit from the north-west (slopes facing it brighten, the others fall into shade)
+    shade = heightmap(W).filter(ImageFilter.Kernel((3, 3), [-2, -1, 0, -1, 0, 1, 0, 1, 2], scale=.45, offset=128))
+    land = Image.blend(land, ImageChops.hard_light(land, Image.merge("RGB", [shade] * 3)), .75)
     tex = Image.composite(land, ocean, mask.filter(ImageFilter.GaussianBlur(1.5)))
     clouds = Image.new("L", (W, TH), 0)
     cd = ImageDraw.Draw(clouds)
@@ -151,12 +194,13 @@ def texture():
             for shift in (-TW, 0, TW):
                 cd.ellipse((px + PAD + shift - w, py - h, px + PAD + shift + w, py + h), fill=rnd.randint(25, 60))
     tex = Image.composite(Image.new("RGB", (W, TH), (238, 242, 246)), tex, clouds.filter(ImageFilter.GaussianBlur(5)))
-    return tex.crop((PAD, 0, PAD + TW, TH))
+    return tex.crop((PAD, 0, PAD + TW, TH)), mask.crop((PAD, 0, PAD + TW, TH))
 
 
 def frames(size, count, tilt=18):
     """Orthographic Earth, tilted towards the viewer, one frame per 360/count degrees, RGBA."""
-    tex = texture().load()
+    tex_img, land_img = texture()
+    tex, land = tex_img.load(), land_img.load()
     ss = size * 3  # supersampled, then reduced for soft edges
     r = ss / 2 - ss * .06  # room for the atmosphere glow
     c = ss / 2
@@ -164,7 +208,10 @@ def frames(size, count, tilt=18):
     light = (-.45, .4, .8)
     ln = math.sqrt(sum(v * v for v in light))
     light = tuple(v / ln for v in light)
-    pix = []  # per pixel: (lat, lon offset, shade) or None, computed once
+    half = (light[0], light[1], light[2] + 1)  # halfway between the light and the viewer, for the glint
+    hn = math.sqrt(sum(v * v for v in half))
+    half = tuple(v / hn for v in half)
+    pix = []  # per pixel: (lat, lon offset, shade, nz, glint) or None, computed once
     for y in range(ss):
         for x in range(ss):
             nx, ny = (x + .5 - c) / r, (c - y - .5) / r
@@ -177,8 +224,9 @@ def frames(size, count, tilt=18):
             lat = math.degrees(math.asin(math.cos(cc) * math.sin(phi0) + (ny * math.sin(cc) * math.cos(phi0) / rho if rho else 0)))
             dlon = math.degrees(math.atan2(nx * math.sin(cc), rho * math.cos(cc) * math.cos(phi0) - ny * math.sin(cc) * math.sin(phi0)))
             lam = max(0., nx * light[0] + ny * light[1] + nz * light[2])
-            shade = .32 + .8 * lam ** .8
-            pix.append(((lat, dlon, shade, nz), rho))
+            shade = .2 + .92 * lam ** .85
+            glint = max(0., nx * half[0] + ny * half[1] + nz * half[2]) ** 48 * 90
+            pix.append(((lat, dlon, shade, nz, glint), rho))
     out = []
     for f in range(count):
         lon0 = -180 + 360 * f / count
@@ -189,13 +237,14 @@ def frames(size, count, tilt=18):
                 a = max(0., 1 - (rho - 1) / .05)
                 data.append((140, 180, 230, round(70 * a * a)))
                 continue
-            lat, dlon, shade, nz = p
+            lat, dlon, shade, nz, glint = p
             u = int(((lon0 + dlon + 180) % 360) / 360 * TW) % TW
             v = min(TH - 1, int((90 - lat) / 180 * TH))
             cr, cg, cb = tex[u, v]
+            sea = glint * (255 - land[u, v]) / 255  # the sun's reflection only on water
             rim = (1 - nz) ** 3 * .2  # a little haze towards the edge
-            data.append((min(255, round(cr * shade + 120 * rim)), min(255, round(cg * shade + 170 * rim)),
-                         min(255, round(cb * shade + 255 * rim)), 255))
+            data.append((min(255, round(cr * shade + 120 * rim + sea)), min(255, round(cg * shade + 170 * rim + sea)),
+                         min(255, round(cb * shade + 255 * rim + sea)), 255))
         img.putdata(data)
         out.append(img.convert("RGBa").resize((size, size), Image.LANCZOS).convert("RGBA"))
     return out
