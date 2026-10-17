@@ -542,6 +542,7 @@ CARD_FILES = {  # file stem: file open in the editor tab, language in the status
     "chirp": ("ChirpApi.kt", "Kotlin", False),
 }
 CARD_DESC_PX, CARD_LEAD = 12.5, 20
+CARD_W, CARD_M, CARD_CODE_X = 400, 8, 44  # card width, outer margin, where the code column starts
 
 
 def card(stem, tag, title, desc, foot):
@@ -550,13 +551,13 @@ def card(stem, tag, title, desc, foot):
     Always dark, like Angie.kt. Every card gets the height of the longest description so the grid lines up.
     400 wide and placed without a width in the README: two fit per row in GitHub's ~830 px column, and on
     narrower screens they wrap one under another by themselves."""
-    w, m = 400, 8
+    w, m = CARD_W, CARD_M
     fname, lang, private = CARD_FILES[stem]
     max_w = w - 2 * m - 60
     most = max(len(wrap(c[2], "JBMono", CARD_DESC_PX, max_w)) for c in CARDS.values())
     lines = wrap(desc, "JBMono", CARD_DESC_PX, max_w)
     h = m + 52 + (most + 1) * CARD_LEAD + 10 + 40
-    code_x, num_x, top = 44, 30, m + 52
+    code_x, num_x, top = CARD_CODE_X, 30, m + 52
     rows = [("cmt", f"// {tag}"), ("ti", title)] + [("d", line) for line in lines]
     body, y = [], top
     for i, (cls, text) in enumerate(rows):
@@ -1128,6 +1129,7 @@ def rules_plain():
 
 # ---------- the character sheet: Kotlin, highlighted like an IDE in the neon palette
 
+CODE_W, CODE_PX, CODE_X = 860, 13, 66  # Angie.kt editor: width, font size, where the code starts
 ANGIE_KT = """@OptIn(ExperimentalMagicApi::class)
 object Angie : Technomancer {
     override val wand = Kotlin
@@ -1200,11 +1202,11 @@ def code_panel():
     """The character sheet as an Android Studio editor: tab with the Kotlin icon, gutter with
     line numbers and override markers, the current line highlighted and a still caret (only the banner's
     lumos and the farewell's nox blink)."""
-    w, size, lead = 860, 13, 21
+    w, size, lead = CODE_W, CODE_PX, 21
     cw = MONO_CW * size
     lines = ANGIE_KT.split("\n")
     tab_h, top = 34, 14
-    num_x, icon_x, code_x = 34, 50, 66
+    num_x, icon_x, code_x = 34, 50, CODE_X
     current = next(i for i, l in enumerate(lines) if "pr.merge()" in l)
     h = tab_h + top + lead * len(lines) + 14
     out = []

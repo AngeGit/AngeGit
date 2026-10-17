@@ -1,0 +1,4 @@
+# What tools/banner.py needs to regenerate assets/ byte for byte. Pinned: another fontTools or brotli
+# may subset or compress the embedded fonts differently, and the up-to-date check would fail.
+fonttools==4.67.0
+brotli==1.2.0
