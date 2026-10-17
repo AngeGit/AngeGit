@@ -13,7 +13,7 @@
 
 <p align="center"><img src="assets/quote-thought.svg" width="716" alt="A thought for the wand-wielding dev: “Code, in my not-so-humble opinion, is our most inexhaustible source of magic.” — Not quite Dumbledore, but definitely his vibe in the Jetpack Compose Era."></p>
 
-<h3><img src="assets/h-hello-hand.svg" height="30" alt="👋"><img src="https://raw.githubusercontent.com/dev-akshat/archive/main/images/gifs/others/earth.gif" height="22" alt="🌍"><picture><source media="(prefers-color-scheme: dark)" srcset="assets/h-hello-dark.svg"><img src="assets/h-hello-light.svg" height="30" alt="Hello, World!"></picture></h3>
+<h3><img src="assets/h-hello-hand.svg" height="30" alt="👋"><img src="assets/globe.png" height="22" alt="🌍"><picture><source media="(prefers-color-scheme: dark)" srcset="assets/h-hello-dark.svg"><img src="assets/h-hello-light.svg" height="30" alt="Hello, World!"></picture></h3>
 
 <picture><source media="(max-width: 600px)" srcset="assets/intro-m.svg"><img src="assets/intro.svg" width="100%" alt="Welcome to my (code) chamber of secrets. I&#x27;m Ángeles, Angie for short: an Android and Kotlin Multiplatform developer based in Madrid, with 5+ years of shipping real apps. By day I build with Kotlin and Compose on an app used by millions of shoppers, where a bug in the checkout is never a small bug. Day and night, I also build the wards that keep AI coding agents honest: specs they must follow, gates they can&#x27;t charm their way past, and evidence behind every “tests pass”, at work and at home. I wrote you a Howler with the rest of the story, just below. Don&#x27;t worry: it&#x27;s a polite one. Almost."></picture>
 
