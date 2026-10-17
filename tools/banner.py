@@ -667,7 +667,7 @@ STORY = [
     "I'm also building **ArIAdna**, a Compose Multiplatform app that shows what an agent is really doing. Fittingly, it's "
     "being built by one: an unattended agent on my home server opens the pull requests, and I review every one and own every decision.",
     "What I'm looking for: a **remote team** (I'm in Madrid) building Android or KMP products, or developer tooling, where AI "
-    "is part of the craft rather than a buzzword. If that's you, send an owl.",
+    "is part of the craft rather than a buzzword. If that's you, send an owl. Or an email. Email is faster.",
 ]
 STORY_SIGN = "— Angie"
 STORY_END = "The envelope bursts into harmless pink sparks."
