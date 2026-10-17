@@ -1,14 +1,15 @@
 """Build the Howler video for the README: voice + illustrations + neon subtitles.
 
 usage (from the repo root):
-  python3 tools/howler_video.py media-src/howler-voz.m4a media-src/howler.mp4
+  python3 tools/howler_video.py media-src/howler-voz.m4a media-src/howler.mp4 --times media-src/howler-cues.json
   python3 tools/howler_video.py --placeholder media-src/howler-draft.mp4   # macOS `say` voice, to test timing
 needs: ffmpeg on PATH, pip install pillow
 
-The illustrations come from media-src/ (kept out of git). Cue timing is found from the pauses in the
-recording: each line of CUES is snapped to the nearest silence, so no manual timestamps are needed.
+The illustrations come from media-src/ (kept out of git). With --times, each cue starts and ends exactly
+where the recording says (a JSON list of [start, end] per cue, e.g. from Whisper's word timestamps);
+without it, CUES are spread over the speech and snapped to the nearest pause.
 """
-import argparse, pathlib, re, subprocess, sys, tempfile
+import argparse, json, pathlib, re, subprocess, sys, tempfile
 
 from PIL import Image, ImageDraw, ImageFilter, ImageFont
 
@@ -24,18 +25,17 @@ SCENES = [  # image in media-src, 16:9 crop of the original (left, top, right, b
     ("portrait-anime90s.webp", (0, 230, 1254, 935), "gentle"),
     ("farewell-over-shoulder.webp", (0, 0, 1254, 705), "zoom"),
 ]
-CUES = [  # scene index, subtitle, style. The polite Howler: it looks like it will shout, and it never does.
-    (0, "…Hi. Don't worry, I'm not going to shout.", "line"),
-    (0, "I'm a very polite Howler. …Almost.", "line"),
-    (1, "I'm Angie, an Android and Kotlin Multiplatform developer from Madrid.", "line"),
-    (2, "By day I ship Kotlin and Compose to an app used by millions of shoppers.", "line"),
-    (2, "Day and night, I build the guardrails that keep AI coding agents honest:", "line"),
-    (2, "at work with my team, and at home while I sleep.", "line"),
-    (3, "Because when an agent says “all tests pass”,", "line"),
-    (3, "my first question is always the same: where's the evidence?", "line"),
-    (4, "The rest of my story is in the letter below.", "line"),
-    (4, "And if you're building something like that… send an owl.", "line"),
-    (4, "Or an email. Email's faster.", "line"),
+CUES = [  # scene index, subtitle, style: what Angie actually says in the recording (lightly tidied)
+    (0, "Hey, hi. Don't worry, I'm not going to shout.", "line"),
+    (0, "I'm a very polite Howler. Most of the time.", "line"),
+    (0, "Oh… almost. Most of the time, I think.", "line"),
+    (1, "I'm Angie, nice to meet you: an Android and Kotlin Multiplatform developer from Madrid.", "line"),
+    (2, "By day, I ship Kotlin and Compose to an app used by millions of shoppers.", "line"),
+    (2, "Day and night, I build the guardrails that keep AI coding agents honest,", "line"),
+    (3, "at work with my team, and at home myself.", "line"),
+    (3, "The rest of my story is in the letter below.", "line"),
+    (4, "And if you are building something like that, send me an owl.", "line"),
+    (4, "Or an email. Email is faster.", "line"),
 ]
 TAIL = 1.2  # seconds of picture after the last word
 
@@ -138,10 +138,15 @@ def scene_frame(name, crop, path):
 
 # ---------- assembly
 
-def build(audio, out, work):
+def build(audio, out, work, times_file=None):
     gaps, duration = silences(audio)
-    times, speech_end = align(gaps, duration)
-    total = max(duration, speech_end + TAIL)
+    if times_file:
+        times = [tuple(t) for t in json.loads(pathlib.Path(times_file).read_text())]
+        assert len(times) == len(CUES), f"{times_file}: {len(times)} timings for {len(CUES)} cues"
+        speech_end = times[-1][1]
+    else:
+        times, speech_end = align(gaps, duration)
+    total = max(speech_end + TAIL, min(duration, speech_end + 1.8))  # end shortly after the last word
 
     # scene k starts a beat before its first cue; the envelope bursts right as the apology starts
     firsts = [next(i for i, c in enumerate(CUES) if c[0] == k) for k in range(len(SCENES))]
@@ -205,13 +210,14 @@ def main():
     ap.add_argument("audio", nargs="?")
     ap.add_argument("out")
     ap.add_argument("--placeholder", action="store_true", help="use the macOS `say` voice instead of a recording")
+    ap.add_argument("--times", help="JSON list of [start, end] per cue, instead of guessing them from the pauses")
     args = ap.parse_args()
     with tempfile.TemporaryDirectory() as tmp:
         work = pathlib.Path(tmp)
         audio = pathlib.Path(args.audio) if args.audio else work / "placeholder.m4a"
         if args.placeholder:
             placeholder_audio(audio)
-        build(audio, pathlib.Path(args.out), work)
+        build(audio, pathlib.Path(args.out), work, args.times)
 
 
 if __name__ == "__main__":
