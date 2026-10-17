@@ -1,6 +1,7 @@
-"""The Howler as a voice note: a slim player strip with the envelope, the waveform of the recording filling
-up as it plays, and a timer. GitHub can only play audio inside a video, so this is the least visual video
-that still plays the voice; it also starts muted there, hence the "turn the sound on" hint.
+"""The Howler as a voice note: a slim player strip with the envelope and the waveform of the recording
+filling up as it plays. GitHub can only play audio inside a video, so this is the least visual video that
+still plays the voice; it also starts muted there, hence the "turn the sound on" hint. The bottom of the
+strip is left empty because GitHub draws its own controls (and the time) over it.
 
 usage (from the repo root):
   python3 tools/howler_voicenote.py media-src/howler-voz.m4a media-src/howler-voicenote.mp4
@@ -90,14 +91,14 @@ def speaker(d, x, y, colour):
 def render(audio, out, work):
     a, rate = samples(audio)
     total = min(len(a) / rate, speech_end(a, rate) + TAIL)
-    x0, x1, mid, amp = 300, 1220, 182, 56  # waveform box
+    x0, x1, mid, amp = 300, 1220, 168, 52  # waveform box; the bottom 70 px stay free for GitHub's own controls
     bar, gap = 5, 3
     nbars = (x1 - x0) // (bar + gap)
     levels = [rms(a, int(i / nbars * total * rate), int((i + 1) / nbars * total * rate)) for i in range(nbars)]
     top = max(levels) or 1
     levels = [max(.06, math.sqrt(v / top)) for v in levels]
     base = card_base(total)
-    title, small, timer = font(OXANIUM, 38, 700), font(MONO, 21, 500), font(MONO, 26, 500)
+    title, small = font(OXANIUM, 38, 700), font(MONO, 22, 500)
     frames = round(total * FPS)
     enc = subprocess.Popen(["ffmpeg", "-y", "-loglevel", "error", "-f", "rawvideo", "-pix_fmt", "rgb24", "-s", f"{W}x{H}",
                             "-r", str(FPS), "-i", "-", "-i", str(audio),
@@ -122,12 +123,11 @@ def render(audio, out, work):
             h = v * amp
             colour = mix(FUCHSIA, ORANGE, i / nbars) if (i + .5) / nbars <= played else DIM
             d.rounded_rectangle((bx, mid - h, bx + bar, mid + h), 2, fill=colour)
-        clock = f"{int(t) // 60}:{int(t) % 60:02d} / {int(total) // 60}:{int(total) % 60:02d}"
-        d.text((x1, 270), clock, font=timer, fill=(189, 179, 207), anchor="rs")
-        hint = (233, 213, 255) if t < 6 or int(t * 2) % 2 == 0 else (150, 140, 170)  # the hint pulses at first
-        speaker(d, x0, 250, hint if t < 6 else (150, 140, 170))
-        d.text((x0 + 34, 270), "turn the sound on · GitHub starts videos muted", font=small,
-               fill=hint if t < 6 else (150, 140, 170), anchor="ls")
+        # top right, clear of GitHub's controls (which also show the time); it pulses for the first seconds
+        hint = (233, 213, 255) if t >= 6 or int(t * 2) % 2 == 0 else (150, 140, 170)
+        label = "turn the sound on"
+        speaker(d, x1 - small.getlength(label) - 34, 54, hint)
+        d.text((x1, 76), label, font=small, fill=hint, anchor="rs")
         enc.stdin.write(img.tobytes())
     enc.stdin.close()
     if enc.wait():
