@@ -501,7 +501,7 @@ def heading(title, tail, size, dark, icon="sparkle"):
 
 CARDS = {  # file stem: tag, title, description, footer
     "day-job": ("DAY SHIFT · ALTEN", "Shopping at scale",
-                "Android dev on a retail app used by millions: I rewrite legacy features one by one, migrated analytics to GA4 and built our AI-agent harness, one-click analytics builds and QA's event dashboard.",
+                "Android dev on a retail app used by millions: I rewrite legacy features one by one, migrated analytics to GA4 and built our AI-agent harness, one-click analytics builds and QA's analytics event dashboard.",
                 "CLIENT WORK · KOTLIN · COMPOSE"),
     "ariadna": ("NIGHT SHIFT · KMP + CMP · WIP", "ArIAdna",
                 "A thread through the agent's labyrinth: a Compose Multiplatform app I'm building to turn live Claude Code sessions into UI, from sub-agents to refusals.",
@@ -1133,23 +1133,22 @@ ANGIE_KT = """@OptIn(ExperimentalMagicApi::class)
 object Angie : Technomancer {
     override val wand = Kotlin
     override val spareWands = listOf(Java, Kotlin)
+    override val familiars = listOf(ClaudeCode, OpenCode, Copilot, Qwen, Gemma)
     override val wandCores = mapOf(
-        "UI" to listOf("Jetpack Compose", "XML views", "Material 3"),
+        "UI" to listOf("Jetpack Compose", "Material 3", "XML views"),
         "Multiplatform" to listOf("Kotlin Multiplatform", "Compose Multiplatform"),
-        "Architecture" to listOf("Clean Architecture", "MVI", "MVVM", "SOLID", "modularization"),
-        "Async" to listOf("Coroutines", "Flow", "LiveData"),
-        "Networking" to listOf("Ktor", "Retrofit", "OkHttp"),
-        "Persistence" to listOf("Room", "SQLite"),
-        "DI" to listOf("Koin", "Hilt"),
-        "Testing" to listOf("JUnit", "Turbine", "MockK", "Mockito", "Espresso", "Compose UI tests"),
-        "Backend" to listOf("Spring Boot"),
-        "Build" to listOf("Gradle", "convention plugins", "version catalogs", "R8"),
-        "Analytics" to listOf("Firebase", "GA4"),
-        "Tools" to listOf("Android Studio", "Git", "GitHub Actions", "Figma", "Postman"),
-        "AI agents" to listOf("Claude Code", "OpenCode", "GitHub Copilot", "local LLMs"),
-        "Harness" to listOf("MCP servers", "agent skills", "quality gates", "LLM-as-judge evals"),
+        "Architecture" to listOf("Clean Architecture", "MVI", "MVVM", "modularization"),
+        "Async & data" to listOf("Coroutines", "Flow", "Ktor", "Retrofit", "Room"),
+        "DI" to listOf("Hilt", "Koin"),
+        "Testing" to listOf("JUnit", "Turbine", "MockK", "Compose UI tests"),
+        "App health" to listOf("R8", "LeakCanary", "dead-code hunts", "CI on GitHub Actions"),
+        "Build" to listOf("Gradle", "convention plugins", "version catalogs"),
+        "Analytics" to listOf("GA4", "Firebase", "consent flows", "multi-SDK event QA"),
+        "Harness" to listOf("agent skills", "MCP servers", "quality gates", "LLM-as-judge evals"),
     )
     override val house: House = TODO("The Sorting Hat is still thinking")
+
+    fun handle(task: Task) = if (task.doneBefore) automate(task) else task.run()
 
     suspend fun review(pr: AgentPullRequest) {
         require(pr.hasEvidence) { "Accio evidence!" }
