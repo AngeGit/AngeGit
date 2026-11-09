@@ -30,5 +30,9 @@ reconoce como la misma persona que en GitHub.
 - «Atrevida» (sin texto, solo la escena): suelta no decía nada.
 - Varias fotos de portada: solo con Premium; no compensa.
 
-**Pendiente:** el banner de GitHub sigue diciendo «KOTLIN MULTIPLATFORM». Si se quiere que coincida,
-se cambia en `tools/banner.py`.
+## 2026-11-09 · Banner del README
+
+**«COMPOSE MULTIPLATFORM» en vez de «KOTLIN MULTIPLATFORM»** en la línea bajo el nombre
+(`ROLE` en `tools/banner.py`), en el título accesible del SVG y en el `alt` del README. El resto del
+banner se queda igual. Motivo: que coincida con la portada de LinkedIn; el letrero KOTLIN ya nombra
+el lenguaje.

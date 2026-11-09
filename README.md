@@ -7,7 +7,7 @@
 <p align="center">
   <picture>
     <source media="(prefers-color-scheme: dark)" srcset="assets/banner-dark.svg">
-    <img src="assets/banner-light.svg" width="100%" alt="Ángeles Martín: Android, Kotlin Multiplatform and AI agent tooling">
+    <img src="assets/banner-light.svg" width="100%" alt="Ángeles Martín: Android, Compose Multiplatform and AI agent tooling">
   </picture>
 </p>
 

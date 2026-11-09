@@ -29,7 +29,7 @@ PLUM, PLUM_MUTED = "#3b1446", "#8a6a96"  # heading ink on GitHub's light theme
 W, H = 1280, 400
 NAME = "Ángeles Martín"
 COMMENT = "// technomancer.kt · Madrid, Spain · remote"
-ROLE = "ANDROID · KOTLIN MULTIPLATFORM · AI TOOLING"
+ROLE = "ANDROID · COMPOSE MULTIPLATFORM · AI TOOLING"
 CMD = ("$ ", "./gradlew ", "lumos", " --target=commonMain")
 OUT = "✓ BUILD SUCCESSFUL · 0 mocks harmed"
 NAME_PX, NAME_MAX_W = 86, 620
@@ -216,7 +216,7 @@ def banner(face, theme):
     city_defs = ('<linearGradient id="cityBack" gradientUnits="userSpaceOnUse" x1="0" y1="0" x2="{W}" y2="0"><stop offset="0" stop-color="#f3e9f9"/><stop offset=".5" stop-color="#ead6f1"/><stop offset=".66" stop-color="#3a1748"/><stop offset="1" stop-color="#140b22"/></linearGradient>'
                  '<linearGradient id="cityFront" gradientUnits="userSpaceOnUse" x1="0" y1="0" x2="{W}" y2="0"><stop offset="0" stop-color="#ece0f6"/><stop offset=".5" stop-color="#dfc2ea"/><stop offset=".66" stop-color="#2c1038"/><stop offset="1" stop-color="#170e2b"/></linearGradient>'
                  ).replace("{W}", str(W)) if theme == "light" else ""
-    return f"""{svg_open(W, H, "Ángeles Martín: Android, Kotlin Multiplatform and AI tooling",
+    return f"""{svg_open(W, H, "Ángeles Martín: Android, Compose Multiplatform and AI tooling",
                  "Neon city: the name glows like a neon sign, a vertical KOTLIN sign flickers, a terminal casts lumos, and a cyberpunk portrait melts into the street at night.")}
 <defs>{BRAND}{t["sky"]}{city_defs}
  <clipPath id="frame"><rect width="{W}" height="{H}" rx="16"/></clipPath>
